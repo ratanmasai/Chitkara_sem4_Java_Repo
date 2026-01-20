@@ -1,0 +1,147 @@
+1. Data: variables
+2. Logics: functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Out of both, data is most important part.
+
+But in structural or procedural programming language the data insucurity is very high due to the "global variable".
+
+bankingApp.cpp:
+----------------
+
+
+string customerName
+int accountNumber
+int balance
+string branchName
+
+void withdraw(int amt){
+//amt withdraw logic
+int balance = balance-amt
+}
+
+void deposit(int amt){
+//amt deposit logic
+balance = balance+amt
+}
+
+void transferAmount(int src, int dest, int amt){
+//transfer Amount logic
+}
+
+
+
+void login(){
+//Authentication and Authorization will be done
+}
+
+void logout(){
+
+}
+
+void changePassword(){
+
+}
+
+
+
+--To develop and run a Java application, we need to install a s/w called JDK(Java Development Kit)
+
+--We can get this JDK s/w from the official website of orcale.
+
+but there are many different vendors are available in the market, from them also we can get the JDK s/w. such as Amazon corretto..
+
+
+JAVA_HOME: C:\Program Files\Amazon Corretto\jdk21.0.9_10
+
+Path: C:\Program Files\Amazon Corretto\jdk21.0.9_10\bin
+
+
+
+Java comes in the form of 3 categories:
+
+
+1. Java SE (Standard Edition) : Core Java
+2. JavaEE (Enterprise Edition): Adv Java
+3. JavaME (Micro Edition): 
+
+
+--Java SE is the base edition for the remaining 2 editions
+
+--All the above editions comes in the form of a specifiction(a documentation which specifies the rules and guildelines to develop a perticular s/w)
+
+--The implementation of the Java SE specification is the JDK s/w.
+
+
+OpenJDK : which is a reference implementation of the Java SE specification.
+
+
+CBSE: Java SE
+NCRT: OpenJDK 
+Other verndors relasess the books based on the CBSE pattern: Amazon corretto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
