@@ -333,6 +333,288 @@ Just like:
 --Other publishers/vendors release their own versions based on the same standard
 
 
+******************************************************************************************************************
+
+Java First Program
+
+Program1.java
+--------------
+
+class Demo {
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to Chitkara");
+    }
+
+}
+
+
+Java Class Naming Convention:
+-----------------------------
+
+--Java class names should start with a capital letter.
+
+--Java follows PascalCase (PascalNaming Convention) for class names.
+
+
+Examples:
+
+class StudentDetails { }
+class BankAccount { }
+
+
+Tip: In Java applications, anything that starts with a capital letter is usually (almost always) a class or an interface.
+
+
+Phases of Java Program Execution:
+----------------------------------
+
+--To execute a Java program, there are two phases:
+
+1. Compilation Phase
+
+2. Execution (Run) Phase
+
+
+(source code)	compiler			(byte code)	
+.java----------->compile----------------------->.class------------>executed by the JVM
+		 javac 							java ClassName
+		javac file_name.java
+
+
+Command to compile:
+-------------------
+
+javac FileName.java
+
+
+
+Bytecode and JVM Execution:
+---------------------------
+
+--The .class file contains bytecode.
+
+--Bytecode is executed by the JVM (Java Virtual Machine).
+
+
+
+
+Multiple Classes in a Single .java File:
+----------------------------------------
+
+--A single .java file can contain multiple classes.
+
+--For each class, the compiler generates a separate .class file.
+
+Example
+
+Program1.java
+-------------
+
+class Demo1 {
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to Chitkara1");
+    }
+}
+
+class Demo2 {
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to Chitkara2");
+    }
+}
+
+class Demo3 {
+
+    public static void main(String[] args) {
+        System.out.println("Welcome to Chitkara3");
+    }
+}
+
+
+
+After Compilation:
+------------------
+
+Demo1.class
+Demo2.class
+Demo3.class
+
+
+Execution:
+----------
+
+java Demo1
+java Demo2
+java Demo3
+
+
+--Only one class is executed at a time
+--That class must contain main()
+
+
+Empty Java Class:
+-----------------
+
+--A Java class can exist without any members.
+
+--An empty class is syntactically valid, but cannot be executed.
+
+Example:
+
+class Demo {
+    // Empty class
+}
+
+
+.class file will be generated
+--Cannot run (no main() method)
+
+
+main() Method Rule:
+------------------
+
+--Only classes containing:
+
+public static void main(String[] args)
+
+
+--can be executed using the java command.
+
+
+public Class and File Name Rule:
+-------------------------------
+
+--A .java file can contain only one public class
+
+--If a class is declared as public:
+
+--File name must be same as the public class name
+
+
+
+Best Practice:
+--------------
+
+--Generally, we write one class per .java file
+
+Makes code:
+
+--Readable
+--Maintainable
+--Industry-standard
+
+
+JDK, JVM, and JRE:
+------------------
+
+Platform Independence
+
+--Java is platform independent
+
+--JVM is platform dependent
+
+Why?
+
+--Java programs compile into bytecode
+
+--Bytecode is independent of OS
+
+--JVM converts bytecode into OS-specific machine code
+
+
+.class  ---> JVM  ---> OS Executable Code
+
+
+--Same .class file can run on:
+
+Windows
+Linux
+macOS
+(as long as JVM is available)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
