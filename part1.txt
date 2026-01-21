@@ -332,3 +332,27 @@ Just like:
 
 --Other publishers/vendors release their own versions based on the same standard
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+function of jvm:-
+----------------
+1.it converts required part of byte code into its equlivallent executable code
+2.it loads the executable code into the ram.
+3.executes this code through local os.
+4.deletes the code from Ram.
+
+now,if a jvm is in windows environment it converts the .class file into its equlivalent
+executable code that is understand by windows environment only...
+simillarly ...
+thus jvm is platform dependent.
