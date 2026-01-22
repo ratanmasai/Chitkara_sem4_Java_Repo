@@ -659,6 +659,7 @@ Objects
 
 4. Are case-sensitive
 
+----G7
 
 
 
@@ -744,7 +745,7 @@ class Demo{
 
 Task:
 
-int x = 15;
+int x = 11;
 
 if x value is divisible by 5 then print "Hello"  // 10
 if x value is divisible by 3 then print "Welcome" // 9 
