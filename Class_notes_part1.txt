@@ -948,7 +948,68 @@ com.chitkara.Demo
 
 ********************************************************************************************************************************
 
+Note: Java uses IEEE 754 floating-point representation, which standardizes how computers encode real numbers using 32-bit (single) or 64-bit (double) binary formats, consisting of a sign bit.It enables efficient, uniform storage of very large or small numbers using normalized scientific notation
 
+
+		String s1 = "10";
+		String s2 = "20";
+		
+		int n1=  Integer.parseInt(s1);
+		int n2 = Integer.parseInt(s2);
+		
+		System.out.println(n1+n2);
+		
+
+
+
+
+Example1:
+
+char c= 'a';
+
+//byte b = c;
+
+
+
+
+
+
+
+
+
+Example2: 
+
+byte b1 = 10;
+
+//byte b2 = b1+1;
+
+
+Example3:
+
+byte b1= 10;
+
+byte b2 = b1++;
+
+
+System.out.println(b1);
+System.out.println(b2);
+
+
+
+Example4:
+
+byte b1= 10;
+byte b2= 20;
+
+//byte b3 = b1+b2;
+
+
+Rule: 
+
+max(int, type1, type2, ....)
+
+
+********************************************************************
 
 
 
