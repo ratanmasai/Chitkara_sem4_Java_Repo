@@ -1113,7 +1113,7 @@ Demo.java -----> compile(java compiler)----->Demo.class---while executing,
 
 --After this JVM will load (allocate the memory) only for the required part of the program, for the remaining parts the actual memory allocation will not happen(not loaded).
 
---Whenever it is required , at that time we can load other part of the application into the RAM dynamically and execute them.
+--Whenever it is required, at that time we can allocate the memory for the other part of the program dynamically and execute them.
 
 --Here the required parts are static members.
 
@@ -1138,7 +1138,7 @@ Demo.java -----> compile(java compiler)----->Demo.class---while executing,
 
 public static void main(String[] args)
 
---Since the main method is a static member, and it is already loaded, it is available to the CPU, and JVM will starts the execution of a Java program from the first line of the main method.
+--Since the main method is a static member, and it is already loaded(memory is allocated), it is available to the CPU, and JVM will starts the execution of a Java program from the first line of the main method.
  
 
 
@@ -1186,7 +1186,7 @@ public static void main(String[] args)
 
 
 
---To access the non-static members in main method, we need to allocate the memory (load) the non-static members inside the RAM dynamically by creating object of that class.
+--To access the non-static members in main method, we need to allocate the memory (load) the non-static members by creating object of that class.
 
 Requirement of creating an object: 
 
@@ -1376,8 +1376,6 @@ public class Demo {
 
 }
 
-
-refer the pic1.png
 
 
 Note: one object(memory space) can be refered by multiple variables simulteniously, but one variable can not refer multiple object simulteniously.
