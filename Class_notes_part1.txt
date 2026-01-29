@@ -1011,6 +1011,25 @@ max(int, type1, type2, ....)
 
 ********************************************************************
 
+Types variables inside a java class:
+------------------------------
+
+1. local variables: defined inside any methods. JVM will allocate memory of these local variables inside the Stack Area.
+
+2. Instance variables/non-static variables: These variables belongs to Object and it will be allocated inside the Heap Area
+at time of Object creation.
+
+--The non-static variables are the Object level variables, and each object has their own copy of the non-static variables.
+
+
+3. static /class level variables: JVM will allocate these variables inside the method area at time of loading a .class file along with class level metadata. at this time only these variables will be initialized.
+
+Note: Static variables belongs to the class and it is sharable among multiple objects.
+
+ 
+
+
+
 
 
 Basic Rule of Computer Execution:
