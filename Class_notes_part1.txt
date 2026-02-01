@@ -1559,28 +1559,61 @@ Note: static member are available to the non-static as well as static members, b
 
 
 
+*****************************************************************************
 
 
+Demo.java:
+---------------
+
+package com.masai;
+
+public class Demo {
+	
+	int x = 100;
+	
+	Demo d1 = new Demo();
+	
+	//A a1 = new A();
+
+	public static void main(String[] args) {
+		 
+		Demo d1 = new Demo();
+		
+		
+		
+	}
+
+}
 
 
+--the above application will throw a runtime exception called StackOverFlowError exception.
 
+Demo.java:
+------------
 
+package com.masai;
 
+public class Demo {
+	
+	int x = 100;
+	
+	Demo d1;
+	
+	//A a1 = new A();
 
+	public static void main(String[] args) {
+		 
+		Demo d1 = new Demo();
+		
+		System.out.println(d1.d1);//null
+		
+		d1.d1=new Demo();
+		
+		System.out.println(d1.d1.x);
+				
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 
