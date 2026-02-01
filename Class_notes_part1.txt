@@ -1053,7 +1053,7 @@ Static Loading (Example: C Language):
 
 --A block of code would be loaded into the RAM before it is executed, after being loaded into the RAM it may or may not get executed.
 
---In static loading, the entire application is loaded into RAM before execution starts.
+--In static loading, the entire application is loaded into RAM (actual memory is allocated) before execution starts.
 
 --Memory is allocated for the whole program, regardless of whether all parts are executed or not.
 
@@ -1258,10 +1258,9 @@ functionality of 'new' operator:
 
 1. Whenever the Jvm encounters 'new' operator, it will reserve a memeory space inside the Heap area.
 
-2. inside that memory space, it will load all the non-static members of that class (variable + methods)
+2. inside that memory space, it will load all the non-static members of that class.
 
-***while loading the non-static methods, it will load only the method name/signature and its address, it will not load method body, method body will be loaded at run time when we call that 
-method.
+***while loading the non-static methods, it will load only the method name/signature and its address, it will not load method body, method body will be loaded at run time when we call that method.
 
 ***while loading the non-static variables, inside that reserved memory space (Heap area), if variable are not initialized then the JVM will provide the default value to those non-static variables.
 
@@ -1498,6 +1497,63 @@ public class Song {
 
 }
 
+
+Example2:
+
+
+Student.java:
+--------------
+
+package com.chitkara;
+
+public class Student {
+	
+	int roll;
+	String name;
+	double marks;
+	
+	static String collageName;
+	
+	void displayDetails() {
+		
+		System.out.println("Roll is : "+roll);
+		System.out.println("Name is : "+name);
+		System.out.println("Marks is : "+marks);
+		System.out.println("Collage Name is: "+collageName);
+		
+		System.out.println("========================");
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		
+		collageName = "Chitkara";
+		
+		Student student1 = new Student();
+		student1.roll= 10;
+		student1.name= "Raj";
+		student1.marks = 780.00;
+		
+		Student student2 = new Student();
+		student2.roll= 20;
+		student2.name= "Simran";
+		student2.marks = 880.00;
+		
+		student1.displayDetails();
+		student2.displayDetails();
+		
+		
+	}
+
+}
+
+
+Note: static member are available to the non-static as well as static members, becasue memory is already allocated for the static members.
+
+--same copy of the static variables are sharable among all the objects.
+
+--where as to access non-static members inside the static area we need to create object of that class.
 
 
 
