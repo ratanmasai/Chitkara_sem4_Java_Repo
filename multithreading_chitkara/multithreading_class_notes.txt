@@ -2908,12 +2908,12 @@ Note: Acquiring multiple locks increases the risk of deadlock if another thread 
 
 
 
-InterThread communication:
+InterThread communication: (synchronized thread communication)
 ==========================
 
 --It means two synchronized threads communicate each other.
 
---Inter-Thread Communication is a mechanism by which synchronized threads can communicate with each other to coordinate their actions.
+--Inter-Thread Communication is a mechanism by which multiple synchronized threads can communicate with each other to coordinate their actions.
 
 
 --It allows one thread to suspend its execution and wait for another thread to perform some task (like producing data), and then get notified when the task is done. This helps avoid busy-waiting and improves efficiency.
@@ -2951,7 +2951,7 @@ public final native void notifyAll()
 
 --Whenever we need to suspend a synchronized thread unconditionally then we use wait() method.
 
---Whenever we need to resume a suspended(waiting) thread then we use notify() method.
+--Whenever we need to resume a suspended(waiting) synchronized thread then we use notify() method.
 
 
 --In the inter-thread communication the thread which require updation it has to call wait() method.
@@ -2959,6 +2959,9 @@ public final native void notifyAll()
 
 
 Note: To call wait() or notify() method on any object, we must have that particular object lock otherwise we will get a runtime exception(IllegalMonitorStateException).
+
+
+wait(), notify(), and notifyAll() method must be called from the synchronized area.
 
 
 Important Rules for wait(), notify(), and notifyAll():
@@ -3207,7 +3210,8 @@ public class Common {
 	}
 
 	public int consume() {
-		
+
+		System.out.println("Consumer consumed " + value);
 		return value;
 	}
 }
@@ -3269,10 +3273,7 @@ public class Consumer extends Thread {
 
 		while (true) {
 
-			int i = c.consume();
-
-			System.out.println("Consumer Consume :" + i);
-
+			c.consume();
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -3372,6 +3373,8 @@ public class Common {
             }
         }
 
+
+	System.out.println("Consumer consumed: "+value);
 
         flag = true;                     // Now it's Producer's turn
         this.notify();                        // Notify Producer
@@ -3809,6 +3812,12 @@ synchronized(B) {
 
 
 Correct way:
+
+synchronized(A) {
+    synchronized(B) {
+    }
+}
+
 
 synchronized(A) {
     synchronized(B) {
