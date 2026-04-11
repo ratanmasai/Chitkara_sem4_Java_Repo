@@ -1,0 +1,734 @@
+Collection Framework Class notes:
+==================================
+
+
+
+--As we know, Arrays are a fundamental data structure used to store multiple values of the same type in a single variable. 
+
+Key Characteristics of Arrays:
+
+1. Fixed size: Once declared, the size of an array cannot be increased or decreased later.
+2. Homogeneous data: Can store only elements of the same data type (with Object[] as a workaround for mixed types).
+3. Direct access using index.
+4. Only one built-in non-static variable: length.
+
+example:
+
+
+int[] arr = {10, 20, 30, 40, 50};
+
+
+
+
+Dynamic Array Program in Java:
+------------------------------
+
+Q/- What is Dynamic Array?
+
+Normal array:
+
+Fixed size
+Cannot grow
+
+Dynamic array:
+
+--Size increases automatically when array is full
+
+Example: ArrayList
+
+
+Creating a custom dynamic array class:
+--------------------------------------
+
+
+Concept:
+
+--When array becomes full, create a new bigger array:  copy old data then add new element
+
+
+1. Create array with capacity 2
+2. Add elements
+3. If array is full:
+      Create new array of double capacity
+      Copy old elements
+      Add new element
+
+
+Example: Creating custom dynamic array class
+
+
+MyDynamicArray.java:
+---------------------
+
+package com.chitkara;
+
+public class MyDynamicArray {
+
+    private int[] arr;
+    private int size;
+
+    public MyDynamicArray() {
+        arr = new int[5]; // initial capacity
+        size = 0;
+    }
+
+    public void add(int data) {
+
+        if (size == arr.length) {
+            System.out.println("Array is full, increasing capacity from " + arr.length + " to " + (arr.length * 2));
+
+	    // New array with double capacity
+            int[] newArr = new int[arr.length * 2];
+
+	    // copy the data
+            for (int i = 0; i < size; i++) {
+                newArr[i] = arr[i];
+            }
+
+	    //changing the reference
+            arr = newArr;
+        }
+
+	//adding the data
+        arr[size++] = data;
+    }
+
+    public void remove(int index) {
+
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Index out of bound");
+        }
+
+        for (int i = index; i < size - 1; i++) {
+            arr[i] = arr[i + 1];
+        }
+
+        size--;
+    }
+
+    public int get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Index out of bound");
+        }
+
+        return arr[index];
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public int capacity() {
+        return arr.length;
+    }
+
+    public void clear() {
+        size = 0;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public void display() {
+        for (int i = 0; i < size; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+}
+
+
+
+
+Java Collection framework:
+==========================
+
+Collection in Java:
+-------------------
+
+--If we want to represent a group of objects as a single unit, then we use Collection.
+
+Example:
+
+Group of Students
+Group of Employees
+Group of Products
+
+--So instead of handling objects one by one, we handle them as a single object (collection object).
+
+
+Q/- What is a Framework?
+
+--A Framework is a ready-made structure that helps developers build applications easily.
+
+Defination:
+
+--A framework is a ready-made, reusable, semi-implemented architecture that provides common functionality. Developers just plug in their specific code where needed.
+
+Real-life Example:
+
+Think of a car, the manufacturer provides the engine, chassis, wheels, and structure (framework). You only need to drive it (your business logic).
+
+
+So,
+
+Framework reduces developer work.
+
+
+--Before Collection Framework, Developers need to code Data Structures themselves like:
+
+Array
+Stack
+Queue
+Linked List
+Searching
+Sorting
+
+--The Collection Framework reduces developer effort by providing ready-made implementations of common data structures.
+
+
+
+
+Collection Framework:
+---------------------
+
+--Collection Framework contains classes and interfaces that help us store and manage a group of objects.
+
+--Each collection class is like a container or bag that can hold multiple objects.
+
+--It provides ready-made Data Structures.
+
+
+
+Array vs Collection:
+--------------------
+
+
+--We can group/hold/store multiple object as a single object by using array also.
+
+--in Java array is also one type of object
+
+Example:- Storing 5 student object as a single object:
+
+
+Student[] students = new Student[5]; 
+
+students[0] = new Student(10,"S1",780);
+students[1] = new Student(12,"S2",880);
+students[2] = new Student(13,"S3",680);
+students[3] = new Student(14,"S4",580);
+students[4] = new Student(15,"S5",680);
+
+
+--Here, One students(array object) storing multiple student object.
+
+
+Limitations of Array:
+---------------------
+
+1. Fixed Size: Cannot increase or decrease size dynamically.
+
+2. No Ready-made Methods:  We must write logic for insert, delete, search
+
+--array concept is not implemented based on readymade method support. For each and every requirement we need to write our own logic,
+even for printing the elements from an array we need to write for loop.
+
+--In each array object we have only one non-static variable i.e 'length'.
+
+
+3. Homogeneous Data: Only same type of elements.
+
+--This limitation we can overcome by taking Object class array.
+
+Example:
+
+Object[] objs= new Object[3];
+
+objs[0]=new Student();
+objs[1]=new Employee();
+objs[2]=new Product();
+
+--Still all elements are treated as a types of Object, we must downcast the object to call thier specific method.
+
+
+--To overcome the above limitation we need to use Collection framework.
+
+
+Features of Collection Framework:
+----------------------------------
+
+--Collections are growable in nature.
+
+--Collection can hold both homogenoius and heterogenious type of element.
+
+--Every collection classes are implemented based on some standard data-structure, hence readymade method support is available for most of the requirements.
+
+--Collection does not support primitives, it only supports objects.
+
+
+Note: Almost all Collection classes are present in java.util package.
+
+
+Two Main Parts of Collection Framework:
+---------------------------------------
+
+
+Collection Framework
+        |
+   -------------------
+   |                 |
+Normal Collection    Map
+(Single Objects)   (Key-Value Pair)
+
+
+
+Note: Map does not extend Collection interface.
+
+
+| Section    | Description                   |
+| ---------- | ----------------------------- |
+| Collection | Works with individual objects |
+| Map        | Works with key-value pairs    |
+
+
+--First we will discuss about the Collection part then will discuss about the Map part later.
+
+
+Main Interfaces of Collection:
+-------------------------------
+
+
+List: --> When we need to arrange the elements in a sequence (index based manner) and duplicate elements are allowed.
+
+Set: --> When we need uniqueness (duplicate elements are not allowed)
+
+Queue: --> When we need to process elements in a specific order (FIFO by default). Supports priority-based processing.
+
+
+
+Collection Interface:
+----------------------
+
+--Collection is the root interface of Collection Framework (Except for Map).
+
+--It defines common methods that can be used with all collection classes.
+
+--There is no any concreate class which implemenets the Collection interface directly.
+
+
+
+
+
+Important Methods of Collection Interface:
+------------------------------------------
+
+
+
+1. int size();  // how many elements are there in that collection object.
+
+2. boolean isEmpty();
+
+3. boolean contains(Object obj);  //for searching any element.
+
+4. Iterator iterator(); // it is inherited from Iterable interface
+
+5. Object[] toArray();//to convert any collection object to normal array
+ 
+6. T[] toArray(T[]); //convert only limited size element to array
+
+7.  boolean add(Object obj); // it is a most commonly used method, to add any element insdie any type of collection.
+ 
+8. boolean remove(Object obj);
+
+9. boolean containsAll(Collection col);
+
+10. boolean addAll(Collection col); copy all the element from one collection to our collection object
+
+11. boolean removeAll(Collection col);
+
+12. boolean retainAll(Collection col); // except supplied collection elements all other will be removed.
+ 
+13. void clear(); // remove all the elements from the collectioj
+
+// these following 2 methods belongs to Object class 
+14. boolean equals(Object obj); //compare two collection object
+   
+15. int hashCode(); // return the hashCode of collection obj
+
+//these methods introduced in java 1.8 to perform functional programming.
+16. public boolean removeIf(java.util.function.Predicate<? super E>);
+  
+17. public java.util.Spliterator<E> spliterator();
+
+18. public java.util.stream.Stream<E> stream();
+
+19. public java.util.stream.Stream<E> parallelStream();
+
+
+
+Iterable interface: 
+-------------------
+
+--This interface introduced in java 1.5 and from java 1.5 onwards Collection interface extends this interface. it belogs to java.lang package.
+
+--this interface has only one abstract method:
+
+public abstract Iterator iterator();
+
+--the return type of this iterator() method is Iterator(I) interface,
+--this Iterator interface belongs to java.util package.
+
+--in addition to the one abstract method, this Iterable interface has 2 default method as well:
+
+  public void forEach(java.util.function.Consumer<? super T>);
+  public java.util.Spliterator<T> spliterator();
+
+
+
+List:
+=====
+
+--It is the child interface of Collection interface and declares the behavour of a collection to preserve the sequence of an element.
+
+--Elements can inserted and accessed by thier position using zero based index.
+
+--Here insertion order will be preserved and duplicate elements are allowed.
+
+--In  addition to the Collection inteface methods ,List interface defines some of its own 
+methods also.
+
+
+public Object get(int index);
+
+public Object set(int index, Object newObject); it will return the overriden object
+
+public Object remove(int index); // will return the removed object.
+
+public int indexOf(Object obj);
+
+etc..
+
+
+***Note: Collection f/w does not support primitives, it only supports objects.
+
+add(Object  obj);
+
+
+ArrayList:
+========
+
+--it is the implementation of the List interface.
+
+--it is basically a dynamic array (it dynamically increase the size).
+
+--ArrayList class is the best choice if our frequent operation is retrieval based on index.
+
+--duplicate are allowed.
+
+--null insertion is possible (multiple time also)
+
+
+example:
+
+
+ArrayList al=new ArrayList();
+
+System.out.println(al);//[]
+		
+
+Note: all the collection classes has overriden the toString() method internally. so they will print the elements inside that collection in [] square bracket.
+
+--all the collection classes are like a container or bag which holds multiple objects.
+
+
+--in the above statement we have created an empty AL object with the default initial capacity 10.
+
+--once AL reaches to its max capacity then a new AL object will be created in the memory automatically with the new capacity using following formula:
+
+newCapacity = (currentCapacity * 3/2) +1;
+
+
+In Mordern Java:
+
+newCapacity = currentCapacity + (currentCapacity >> 1)
+
+--which is ~ 1.5x growth
+
+
+
+
+1. ArrayList al=new ArrayList(1000); // AL created with the initial capacity 1000;
+
+
+2. list.ensureCapacity(500);   
+
+--It increases the internal capacity to at least 500, but only if the current capacity is smaller than 500.
+
+--If current capacity is already ≥ 500, no effect (nothing happens).
+
+--If current capacity is smaller, it grows the array (usually to 1.5× or directly to 500, whichever is larger).
+
+
+3. list.trimToSize();   // reduces capacity to exactly current size (saves memory)
+
+
+
+
+Autoboxing and Autounboxing:
+==========================
+
+this concept comes in java 1.5 version
+
+
+boxing: converting primitives into the object(box) it is known as boxing and reverse 
+is called unboxing.
+
+--8 primitive datatype.
+
+--for each primitive data types we have corresponding wrapper classes are there.
+
+--int --- java.lang.Integer
+--byte --- java.lang.Byte
+--char ---> java.lang.Charecter
+--boolean --> java.lang.Boolean
+--
+--
+
+
+--before java 1.5 inorder to add the primitives in the collection we need to wrap that primitives to their corresponding wrapper class object.
+
+int i=10;
+
+Integer i1= Integer.valueOf(i); //boxing
+
+int x=  i1.intValue(); //unboxing
+
+
+from java 1.5 onwords  we have a concept called autoboxing and autounboxing
+
+int i =10;
+
+Integer i1 = i;  //autoboxing
+
+int x=i1; // autounboxing
+
+
+example:
+
+
+
+		ArrayList al=new ArrayList();
+		
+		
+		
+		al.add("delhi");
+		al.add("mumbai");
+		al.add("chennai");
+		al.add("kolkata");
+		al.add(new A());
+		al.add(new Student(10, "Amit", 780));
+		al.add(null);
+		al.add(null);
+		al.add("delhi");
+		al.add(10);  // Integer 
+		al.add(true); //Boolean
+		al.add(10.55); //Double
+		
+		
+		
+		System.out.println(al);
+		System.out.println(al.size());
+		
+		
+		
+//		Object obj= al.get(1);
+//		String city= (String)obj;
+		
+		int x= (Integer)al.get(9);
+		
+		
+		System.out.println(x);
+		
+
+
+--In the above application our ArrayList object is not a type safe Collection object.
+
+--If our collection is not type safe collection then we can add any type of object at any position inside our collection.
+
+--Here while getting the elements from the type unsafe collection every time we need to downcast the element, which is not feasiable. there might be a change of ClassCastException.
+
+--So in realtime, our collection should be type safe collection.
+
+--Type-safe collection means restricting the collection to hold only one type of object using Generics.
+
+
+Benifit of type safe collection:
+-------------------------------------
+
+1. if we try to add any other type of element then compiler will stop at compile time.
+
+2.we will get rid of downcasting problem.
+
+ArrayList<Object> al=new ArrayList<>();
+
+
+--taking the type of Object is simmillar to creating type-unsafe collection.
+
+example
+
+
+package com.chitkara;
+
+import java.util.ArrayList;
+
+public class Demo {
+
+	public static void main(String[] args) {
+		
+		ArrayList<String> al=new ArrayList<>();
+		
+		
+		
+		al.add("delhi");
+		al.add("mumbai");
+		al.add("chennai");
+		al.add("kolkata");
+		al.add("delhi");
+		al.add(10);
+		al.add(null);
+		
+		
+		
+		String s= al.get(2);
+		
+		System.out.println(s.toUpperCase());
+		
+
+	}
+
+}
+
+
+--the above type safe collection concept is called Genrics concept.
+
+--Generics concept also introduced in java 1.5 version
+
+//ArrayList class sudo code before generics
+
+class ArrayList implements List{
+
+public boolean add(Object obj){
+//adding the object obj to the AL.
+}
+
+public Object get(int index){
+it will return the obj to the specified index
+}
+
+//remaining methods.
+
+
+}
+
+
+//ArrayList class sudo code after generics
+
+class ArrayList<T> implements List{
+
+public boolean add(T t){
+//adding the object t to the AL.
+}
+
+public T get(int index){
+it will return the obj to the specified index
+}
+
+//remaining methods.
+}
+
+
+
+example:
+
+ArrayList<String> al=new ArrayList<>(); // it is the List of String object
+
+
+ArrayList<Integer> al=new ArrayList<>(); // it is the List of Integer object
+
+ArrayList<Student> al=new ArrayList<>(); // it is the List of Student object
+
+
+Demo.java:
+----------------
+
+package com.masai;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Demo {
+
+	public static void main(String[] args) {
+		
+	
+		Scanner sc= new Scanner(System.in);
+		
+		ArrayList<Student> students = new ArrayList<>();
+		
+		int count = 1;
+		
+		while(true) {
+			
+			
+			System.out.println("Enter details of Student "+(count++));
+			
+			System.out.println("Enter Roll");
+			int roll= sc.nextInt();
+			
+			System.out.println("Enter Name");
+			String name= sc.next();
+			
+			System.out.println("Enter Marks");
+			int marks= sc.nextInt();
+			
+			Student student = new Student(roll, name, marks);
+			
+			students.add(student);
+			
+			System.out.println("Student object added sucessfully...");
+			
+			System.out.println("Want more(y/n) ?");
+			String choice=  sc.next();
+
+			if(choice.equalsIgnoreCase("n"))
+				break;
+				
+		}
+		
+		
+		
+		for(Student student: students) {
+			
+			System.out.println("Roll is :"+student.getRoll());
+			System.out.println("Name is :"+student.getName());
+			System.out.println("Marks is :"+student.getMarks());
+			
+			System.out.println("================================");
+		}
+		
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
