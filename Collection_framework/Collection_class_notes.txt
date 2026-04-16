@@ -2037,6 +2037,1060 @@ System.out.println(list);
 
 
 
+Generice revisted:
+==================
+
+--Generics are a powerful feature introduced in Java 5 (1.5) that allows you to write reusable, type-safe classes, interface and methods that can work with different data types.
+
+--Generics let us to write true polymorphic code that works with any data types.
+
+--Think of generics as placeholders for types(<T>, <E>, <K, V>, etc.).Instead of writing separate classes or methods for String, Integer, Employee, etc., you write one generic version of  class/method that works with any type you specify at uses time.
+
+
+Note: Generics work only with reference types (objects like String, Integer, Employee). Primitives (int, double) are not allowed directly. You must use wrapper classes (Integer, Double, etc.).
+
+
+
+--Generics provide compile-time type safety, not runtime safety (due to type erasure).
+
+
+Without Generics (pre-Java 5 style):
+
+--You had to use Object and do manual casting. This was error-prone and not type-safe.
+
+
+
+Example: Creating a Java class which will work with any type of Object.(Non-Generic class)
+
+
+
+MyGen.java:
+-----------
+
+package com.chitkara;
+
+public class MyGen {
+
+	
+	private Object obj;
+	
+	void add(Object obj) {
+		this.obj = obj;
+	}
+	
+	
+	Object get() {
+		return obj;
+	}
+	
+}
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		MyGen gen1 = new MyGen();
+
+		gen1.add("Welcome"); // String class object
+
+		// String s1= gen1.get(); //compilation error
+
+		Object obj = gen1.get();
+		String s1 = (String) obj; //downcasting..
+
+		System.out.println(s1.toUpperCase());
+
+		MyGen gen2 = new MyGen();
+
+		gen2.add(new A());
+
+		A a1 = (A) gen2.get();
+
+		a1.funA();
+
+	}
+}
+
+
+
+A.java:
+-------
+
+package com.chitkara;
+
+public class A {
+
+	public void funA() {
+		System.out.println("Inside funA of A class");
+	}
+	
+}
+
+
+Problems:
+
+--Here eventhough MyGen class can accept any type of object but, to get back that object we need to perform downcasting.
+
+
+-No type safety
+-Manual casting required
+-Runtime errors possible(while downcasting we may get ClassCastException)
+
+
+Solution Using Generics:
+------------------------
+
+Example: Creating a Java class which will work with any type of Object.(Generic class)
+
+MyGen.java:
+------------
+
+package com.chitkara;
+
+public class MyGen<T> {
+
+	
+	private T obj;
+	
+	void add(T obj) {
+		this.obj = obj;
+	}
+	
+	
+	T get() {
+		return obj;
+	}
+	
+}
+
+
+
+--Now the above MyGen class is capable to manage any type of object
+
+Example:
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		MyGen<String> gen1 = new MyGen<>();
+		gen1.add("Hello");
+
+		String s1 = gen1.get();
+
+		System.out.println(s1.toUpperCase());
+
+		MyGen<Integer> gen2 = new MyGen<>();
+		gen2.add(20);
+		System.out.println(gen2.get());
+
+		MyGen<A> gen3 = new MyGen<>();
+		gen3.add(new A());
+
+		A a1 = gen3.get();
+
+		a1.funA();
+
+	}
+}
+
+
+ 
+
+
+
+
+Advatange of Generics:
+----------------------
+
+1. Type Safety
+
+--Compiler prevents you from adding wrong types (e.g., you can't add a String to List<Integer>).
+
+2. No More Downcasting / ClassCastException
+
+--You get the exact type back without casting.
+
+3. Code Reusability
+
+--Write once, use with any type.
+
+4. Compile-time Bug Detection
+
+--Errors are caught early instead of at runtime.
+
+5. Cleaner and More Readable Code
+
+
+Important Rule:
+---------------
+
+Generics work only with Reference Types:
+
+List<int> //Invalid
+List<Integer> //Valid
+
+
+
+Bounded Types (Constraints on Type Parameters)
+-----------------------------------------------
+
+
+--In Generic Classes, we can apply the constraint or bound the type parameter for a particular range by using "extends" keyword.
+
+
+Example 1: Unbounded type
+
+
+
+class Test<T>
+{
+}
+
+
+--It is unbounded type (without any constraint), we can pass any type of parameter.
+
+Test<String> t=new Test<>();
+Test<Integer> t=new Test<>();
+
+
+Example2: Bounded type:
+
+
+class Test<T extends X>
+{
+}
+
+
+--If X is a class type then we can pass either X type elements or sub class elements of X type as parameter types.
+
+Example:
+
+
+Payment: Parent class
+CashPayment: Child class
+CardPayment: Child class
+
+
+
+class Payment
+{
+}
+
+class CashPayment extends Payment
+{
+}
+
+class CardPayment extends Payment
+{
+}
+
+
+
+
+class Bill<T extends Payment>
+{
+}
+
+
+Bill<Payment> bill = new Bill<>(); ---> Valid
+Bill<CashPayment> bill = new Bill<>();--> Valid
+Bill<CardPayment> bill = new Bill<>();---> Valid
+
+//Bill<Integer> bill = new Bill<>();---> Invalid
+
+
+
+Another Example:
+-----------------
+
+
+class Test<T extends Number>
+{
+}
+
+Test<Number> t=new Test<>()---> Valid
+Test<Integer> t=new Test<>();----> Valid
+Test<Float> t=new Test<>();----> Valid
+
+//Test<String> t=new Test<>();---> Invalid
+
+
+
+--If 'X' is an interface then we are able to pass either X type elements of its implementation class types as parameter.
+
+
+Example:
+
+
+interface Java
+{
+}
+
+
+class CoreJava implements Java
+{
+}
+
+class AdvJava implements Java
+{
+}
+
+
+class Course<T extends Java>
+{
+}
+
+
+Course<Java> crs1 = new Course<>(); --->Valid
+Course<CoreJava> crs2 = new Course<>();--> Valid
+Course<AdvJava> crs3 = new Course<>();---> Valid
+
+Course<String> crs3 = new Course<>();---> Invalid
+
+
+***NOTE: Bounded parameters or constraint at class level are not allowing "implements" keyword and "super" keyword.
+
+
+Example:
+
+
+class Test<T implements Runnable>
+{
+}
+
+Status: Invalid
+
+
+class Test<T super String>
+{
+}
+
+Status: Invalid
+
+
+
+Multiple Bounds (using &)
+--------------------------
+
+--In Generic classes, we can use more than one type as bounded parameter by using '&' symbol.
+
+example
+
+class Test<T extends Number & Serializable>
+{
+}
+
+
+--Here Test class is able to allow the elements which must be either same as Number or sub classes to the number and must be the implementations of Serializable interface.
+
+Test<Integer> t=new Test<Integer>();--> Valid
+Test<Float> t=new Test<Float>();--> Valid
+Test<String> t=new Test<String>--> Invalid.(Because String type is not a subtype of Number, but its implements the Serializable interface)
+
+
+***Note:  The "extends" keyword will not allow two class types at a time.
+
+class Test<T extends Number & Thread>
+{
+}
+
+
+Status: Invalid
+
+
+But the "extends" keyword is able to allow more than one interface type.
+
+class Test<T extends Runnable & Serializable>
+{
+}
+
+Statis: valid.
+
+
+--The "extends" is able to allow both class type and interface type , but, first we have to specify class type then we have to specify Interface type. i.e first class name and then interface name.
+
+
+
+
+class Test<T extends Number & Runnable>
+{
+}
+
+
+Status: Valid.
+
+class Test<T extends Runnable & Number>
+{
+}
+
+Status: Invalid.
+
+
+
+
+
+Generic methods:
+===============
+
+---we can also declare a generic method inside a generic or non-generic class.
+
+
+Syntax: Type parameter(s) declared before the return type.
+
+
+
+Example1:
+
+
+
+
+Demo1.java:
+---------------
+
+package com.chitkara;
+
+public class Demo {
+		
+
+	// Non-generic method
+	//public static void fun1(String s) {
+		
+	//	System.out.println(s);
+		
+	//}
+	
+
+	//Generic method
+
+	public static <E> void fun1(E e) {
+		
+		System.out.println(e);
+		
+	}
+
+
+
+	
+	public static void main(String[] args) {
+		
+	
+		//fun1("Hello");
+		//fun1(10); //Error
+
+		fun1(10);
+		fun1("Hello");
+		fun1(new A());
+		
+		
+	}
+
+}
+
+
+
+Another Example:
+----------------
+
+public static void print(int key,int value){   
+	System.out.println(key+"==="+value);
+}
+
+
+
+//Here, if we want the key and value element can be any type: 
+
+
+public static <K,V> void print(K key, V value){
+	System.out.println(key+"==="+value);
+
+}
+
+
+
+
+
+
+--Instead of defining too many printArray method which will print array of Integer, String, Customer, Student, we can create a printArray method in generic way which can print array type of array.
+
+public <E> void printArray(E[] er){
+
+}
+
+
+--here <E> should come before the return type.
+
+
+
+Example:
+
+
+Demo.java:
+-----------
+
+
+package com.chitkara;
+
+public class Demo {
+	
+	
+	public static <E> void printArray(E[] arr) {
+		
+		for(E e:arr) {
+			System.out.println(e);
+		}
+		
+		
+	}
+	
+	
+	public static void main(String[] args) {
+		//In generics primitives are not allowed		
+		//int[] nums= {10,20,30,40,50};
+		
+		Integer[] nums= {10,20,30,40,50};
+		
+		printArray(nums);
+		
+		String[] cities= {"Delhi","pune","mumbai"};
+		
+		printArray(cities);
+			
+	}
+}
+
+
+
+Note: The above printArray() method as same as :
+
+
+	public static void printArray(Object[] arr) {
+		
+		for(Object obj:arr) {
+			System.out.println(obj);
+		}
+		
+		
+	}
+
+
+
+Example:
+
+
+
+Employee : Parent class
+
+Developer: Child class
+Manager: Child class
+
+
+
+
+public static void printArray(Employee[] employees){
+
+	for(Employee employee: employees){
+		System.out.println(employee);
+	}
+
+}
+
+
+
+--We can call the above method by passing Employee class array as well as Developers and Manager array as well.
+
+
+Employee[] employees = {new Employee(), new Employee()};
+printArray(employees);
+
+Developer[] developers = {new Developer(), new Developer()};
+printArray(developers);
+
+
+Manager[] managers = {new Manager(), new Manager()};
+printArray(managers);
+
+
+
+
+
+Covarience type in Java:
+========================
+
+--As we know that to the super class reference variable we can store any of its subclass object.
+
+
+Example:
+
+
+String s = "Hello";
+
+Object obj = s;
+
+
+--Covariance allows a type to accept its subtypes while preserving the "is-a" relationship.
+
+--In Java arrays are the covariance types:
+
+--We can store array of any object to the referernce variable of Object[] array also.
+
+
+Example:
+
+
+
+String[] fruits = {"Apple", "Mango", "Banana", "Pineapple"};
+
+Object[] objArray = fruits; //allowed
+
+
+Problem:
+
+objArray[0] = new A(); // Heap Pollution, ArrayStoreException
+
+Here, no error at compiled time, compiler is not able to detect it but at runtime we get an exception.
+
+
+
+In Java Generics are Invarient by default.
+
+
+Example:
+
+
+List<String> sList = new ArrayList<>();
+
+List<Object> oList = sList; // Compilation error
+
+
+
+Example:
+
+
+
+public static void printArray(List<Employee> employees){
+
+	for(Employee employee: employees){
+		System.out.println(employee);
+	}
+
+}
+
+
+
+
+List<Employee> employees = List.of(new Employee(), new Employee());
+printArray(employees); // valid
+
+List<Developer> developers = List.of(new Developer(), new Developer());
+printArray(developers); // Error
+
+Here is one way:
+
+
+
+		List<Developer> delevopers = new ArrayList<>(List.of(new Developer(), new Developer()));
+		
+		List<Employee> employees = new ArrayList<>();
+		
+		for(Developer developer: delevopers) {
+			
+			employees.add(developer);
+		}
+		
+		
+		printArray(employees);
+
+
+
+
+
+
+
+--To make our Collection to work as a covarience type and make them flexible, we need to make use of wildcards:
+
+--With the collections we can use following 3 types of wildcards:
+
+
+1. Subtype or upper bound wildcards: Covariance (for reading/producing)
+
+2. SuperType or Lower bound wildcards: Contravariance (for writing/consuming)
+
+3. Unbounded Wildcard 
+ 
+
+PECS Principle (Producer Extends, Consumer Super)
+
+--Producer (you only get/read values) : Use ? extends T
+--Consumer (you only put/write values):  Use ? super T
+
+
+
+
+
+
+1. Subtype or upper bound wildcards: (? extends T)
+-------------------------------------
+
+
+
+
+--Using this we can achieve the covarinece type of feature in collections also.
+
+syntax:
+
+<? extends T> 
+
+--means a type that is either T or a child of T, 
+
+
+Example:
+
+
+public static void printArray(List<? extends Employee> employees){
+
+	for(Employee employee: employees){
+		System.out.println(employee);
+		// employeed.add(new Employee());       // Compile error - cannot add
+	}
+
+}
+
+
+--This method can accept at max or upper bound of Employee class object. we are trying to restrict the boundry at max to Employee class
+
+--The wildcard type ? extends Employee indicates some unknown subtype of Employee. we can call this method with List<Developer> or List<Manager> as well.
+
+
+Note: When we are using Subtype or Upper bound Wildcard, we can't add a new element/object inside the collection. For example inside the above method, if we try to add an object of Employee or its subtype we get a compilation error.
+
+
+--The reason is, the ? inside ? extends Employee, could refer to any subclass, perhaps Developer or Manager, Since we can't add a Developer to a List<Manager>.
+
+
+
+2. SuperType or Lower bound wildcards:
+-----------------------------------
+
+--Contravarience is the opposite of covarience, and it refers to the ability of a type to accept more generic(broader) types.
+
+--Contravariance allows a generic type to work with its supertypes using ? super.
+
+--Lower bounded wildcard (? super T) allows a generic type to accept T and its supertypes, making it suitable for write operations.
+
+syntax:
+
+<? super A> 
+
+Means:
+
+Accepts:
+
+T
+Parent of T
+Grandparent of T
+
+
+
+
+
+
+
+Note: We can specify an upper bound for a windcard, or we can specify a lower bound but we can not specify both.
+
+
+
+
+--Suppose, we want to write a method that puts Integer object into a list, To maximize flexibility, we would like that method to work on List<Integer>, List<Number> or List<Object>: Anything that can hold an Integer value.
+
+
+
+public static void addNumbers(List<? super Integer> list){
+
+	for(int i=1;i<=10;i++){
+		list.add(i); //Perform write operation
+	}
+
+}
+
+
+
+List<Integer> l1 = new ArrayList<>();
+List<Number> l2 = new ArrayList<>();
+List<Object> l3 = new ArrayList<>();
+
+List<String> l4 = new ArrayList<>():
+
+
+
+addNumbers(l1); //valid
+addNumbers(l2); //valid
+addNumbers(l3); //valid
+
+addNumbers(l4); //invalid
+
+
+
+
+Key properties:
+--------------
+
+1. Write (Allowed)
+
+list.add(10); // Integer allowed, Because all these lists can store Integer
+
+
+2. Read (Restricted):
+
+Object obj = list.get(0); // Only Object allowed, because Compiler doesn't know exact type
+
+
+
+
+
+Example2:
+=======
+
+
+package com.masai;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Demo{
+
+	public static  void fun1(List<? super Developer> list) {
+		
+		
+		for(Object s:list) {   // biggest type (Reading with Object, not with Developer)
+			
+			System.out.println(s);
+		}
+		
+		
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		
+		List<Developer> plist=new ArrayList<>();
+		List<Employee> slist=new ArrayList<>();
+		List<Object> olist=new ArrayList<>();
+		
+		
+		fun1(plist);
+		fun1(slist);
+		fun1(olist);
+		
+	}
+
+}
+
+
+
+extends = read
+super = write
+
+
+
+Unbounded wildcard:
+--------------------------
+
+List<?>
+
+
+--In Java Generics, a wildcard (?) represents an unknown type.
+
+--Unbounded Wildcard (?) means:  "any type"
+
+--Unbounded wildcard is used when you don’t care about the type, but still want type safety.
+
+--There are two scenarios where using unbounded wildcard is useful.
+
+1. When writing a method that relies on Object class functionality, If a method uses only methods defined in the Object class (like toString(), equals()), then the exact type is not important.
+
+2. If a method uses operations that do not depend on the generic type (such as size(), clear(), isEmpty()), then <?> can be used.
+
+
+List<?> means a list typed to an unknown type. This could be a List<A>, a List<B>, a List<String> etc.
+
+Since  you do not know what type the List is typed to, you can only read from the collection, and you can only treat the objects read as being Object instances. Here is an example:
+
+package com.masai;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Demo{
+
+	public static void fun1(List<?> list) {
+		
+		for(Object obj:list) {
+			System.out.println(obj.toString());
+		}
+		//here we can not write inside the list
+		//list.add(10); // error	
+	
+	}
+
+	public static void fun2(List<?> list) {
+		
+		 System.out.println("Size: " + list.size()); // no type needed
+        		 list.clear(); // no type needed
+	
+	}
+
+	
+	
+	public static void main(String[] args) {
+		
+		List<Integer> ilist=Arrays.asList(10, 11);
+		
+		List<String> slist= Arrays.asList("A","B","C");
+		
+		fun1(ilist);
+		fun1(slist); 
+		
+		fun2(slist); 
+
+				
+		
+	}
+
+}
+ 
+
+
+
+
+
+Type Erasure in Java:
+---------------------
+
+--Type Erasure is a mechanism used by Java to implement generics.
+
+--Type Erasure means removing generic type information at compile time.
+
+
+Defination:
+-----------
+
+--Type Erasure is the process of removing generic type information at compile time so that generic code is converted into non-generic code for JVM execution.
+
+Need for Type Erasure:
+---------------------
+
+--Java introduced generics in Java 5 without changing JVM
+
+So:
+
+--JVM does not understand generics
+--Compiler converts generic code to normal code
+-- No Generic Information at Runtime:
+
+
+This ensures:
+
+--Backward compatibility with older Java versions
+
+
+How Type Erasure Works:
+---------------------
+
+Case 1: Unbounded Type
+
+class Box<T> {
+    T value;
+}
+
+
+After compilation:
+
+class Box {
+    Object value;
+}
+
+
+Case 2: Bounded Type:
+
+class Box<T extends Number> {
+    T value;
+}
+
+After compilation:
+
+class Box {
+    Number value;
+}
+
+
+
+Example:
+
+List<String> list = new ArrayList<>();
+list.add("Hello");
+
+After type erasure:
+
+List list = new ArrayList();
+list.add("Hello");
+
+
+
+Key Effects of Type Erasure:
+-------------------------
+
+
+1. Method Overloading Restriction
+
+
+void fun1(List<Integer> list) {
+		
+}
+	
+void fun1(List<String> list) {
+		
+} // Not allowed
+
+
+2. Type Casting Inserted by Compiler
+
+List<String> slist = List.of("Java", "Pyhton", "C++");
+
+String s = slist.get(0);
+	
+Compiler internally adds:
+
+String s = (String) list.get(0);
+
+
+Important Note
+
+--Generics provide compile-time type safety, not runtime safety.
+
+
+
+Gift Box Analogy:
+
+At compile time:  box has label (String, Integer)
+At runtime: label removed:  only box remains
+
+
+
 
 
 
