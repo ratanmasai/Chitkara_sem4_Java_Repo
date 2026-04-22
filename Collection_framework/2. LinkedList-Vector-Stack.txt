@@ -664,7 +664,7 @@ When LinkedList Can Still Be Better ?
 Frequent addFirst() / removeFirst()
 Frequent addLast() / removeLast()
 Queue / Deque behavior
-Insertion when node position is already known (using iterator)
+Insertion/deletion when node position is already known (using iterator)
 
 
 
