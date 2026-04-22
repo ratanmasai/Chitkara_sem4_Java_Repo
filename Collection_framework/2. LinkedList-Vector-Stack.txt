@@ -669,6 +669,74 @@ Insertion/deletion when node position is already known (using iterator)
 
 
 
+Performance Comparison: ArrayList vs LinkedList for Middle Insertion/Deletion using Iterator.
+
+--In this case, since we are using Iterator, The LinkedList will now work faster than ArrayList.
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		System.out.println("Performance Comparison: Deletion/Insertion from middle using Iterator ");
+
+		List<Integer> arrayList = new ArrayList<>();
+		List<Integer> linkedList = new LinkedList<>();
+
+		for (int i = 0; i < 10000; i++) {
+			arrayList.add(i);
+			linkedList.add(i);
+		}
+
+		// Test with ArrayList
+		long startTime = System.currentTimeMillis();
+
+		Iterator<Integer> itr1 = arrayList.iterator();
+
+		while (itr1.hasNext()) {
+			if (itr1.next() == 500)
+				itr1.remove();
+		}
+
+		System.out.println("ArrayList Size: " + arrayList.size());
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("ArrayList Time: " + (endTime - startTime) + " ms");
+
+		// Test with LinkedList
+		startTime = System.currentTimeMillis();
+
+		Iterator<Integer> itr2 = linkedList.iterator();
+
+		while (itr2.hasNext()) {
+			if (itr2.next() == 500)
+				itr2.remove();
+		}
+
+		System.out.println("LinkedList Size: " + linkedList.size());
+
+		endTime = System.currentTimeMillis();
+
+		System.out.println("LinkedList Time: " + (endTime - startTime) + " ms");
+	}
+}
+
+
+
+
+
+
 Note: LinkedList is important conceptually and for niche workloads, but in modern Java, ArrayList and ArrayDeque are preferred for most practical workloads.
 
 
