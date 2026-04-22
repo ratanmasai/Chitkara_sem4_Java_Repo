@@ -1446,6 +1446,24 @@ List<String> list = new ArrayList<>(List.of("A", "B", "C"));
 --List.of(): Fully immutable list
 
 
+
+
+
+Difference between Arrays.asList() and List.of()
+-------------------------------------------------
+
+
+| Feature      	| Arrays.asList() 	| List.of()   |
+| ------------ 	| --------------- 	| --------- 	  |
+| Add/Remove   	|  No            	|  No       	     |
+| Modify (set) 	|  Yes           	|  No       	  |
+| Null allowed 	|  Yes           	|  No       	     |
+| Type         	| Fixed-size      	| Immutable|
+
+
+
+
+
 Important Note: 
 
 If we try to create a fixed sized List with an existing array by using Arrays.asList() or List.of() method:
@@ -1877,7 +1895,7 @@ public class Demo {
 Collections Class in Java:
 ========================
 
---Collections is a utility class in Java that provides static methods to operate on collections.
+--Collections is a utility class in Java that provides static methods to operate on collection objects.
 
 --It belongs to java.util package
 
@@ -1957,7 +1975,7 @@ System.out.println(count); // 2
 
 5. fill():
 
---Replaces all elements with given value.
+--Replaces(reset) all elements with given value.
 
 Example:
 
@@ -2394,14 +2412,14 @@ class Test<T extends Number & Serializable>
 }
 
 
---Here Test class is able to allow the elements which must be either same as Number or sub classes to the number and must be the implementations of Serializable interface.
+--Here Test class is able to allow the elements which must be either same as Number or sub classes to the Number and must be the implementations of Serializable interface.
 
 Test<Integer> t=new Test<Integer>();--> Valid
 Test<Float> t=new Test<Float>();--> Valid
 Test<String> t=new Test<String>--> Invalid.(Because String type is not a subtype of Number, but its implements the Serializable interface)
 
 
-***Note:  The "extends" keyword will not allow two class types at a time.
+***Note:  The "extends" keyword will not allow two class types at the same time.
 
 class Test<T extends Number & Thread>
 {
@@ -2586,6 +2604,10 @@ Note: The above printArray() method as same as :
 	}
 
 
+--Inside the printArray() method we can only invoke the Object class related methods, and not able to invoke object specific methods without downcasting.
+
+
+
 
 Example:
 
@@ -2664,7 +2686,7 @@ Here, no error at compiled time, compiler is not able to detect it but at runtim
 
 
 
-In Java Generics are Invarient by default.
+In Java Generics are Invarient by default, Means does not follow parent-child relationship.
 
 
 Example:
@@ -2763,9 +2785,9 @@ public static void printArray(List<? extends Employee> employees){
 
 	for(Employee employee: employees){
 		System.out.println(employee);
-		// employeed.add(new Employee());       // Compile error - cannot add
 	}
-
+	// employees.add(new Employee());       // Compile error - cannot add
+	employees.add(null); // allowed
 }
 
 
@@ -2777,9 +2799,9 @@ public static void printArray(List<? extends Employee> employees){
 Note: When we are using Subtype or Upper bound Wildcard, we can't add a new element/object inside the collection. For example inside the above method, if we try to add an object of Employee or its subtype we get a compilation error.
 
 
---The reason is, the ? inside ? extends Employee, could refer to any subclass, perhaps Developer or Manager, Since we can't add a Developer to a List<Manager>.
+--The reason is, the ? inside "? extends Employee", could refer to any subclass, perhaps Developer or Manager, Since we can't add a Developer to a List<Manager>.
 
-
+--But we can add null value, because null is the default value of any reference variable.
 
 2. SuperType or Lower bound wildcards:
 -----------------------------------
@@ -2792,7 +2814,7 @@ Note: When we are using Subtype or Upper bound Wildcard, we can't add a new elem
 
 syntax:
 
-<? super A> 
+<? super T> 
 
 Means:
 
@@ -2801,6 +2823,12 @@ Accepts:
 T
 Parent of T
 Grandparent of T
+
+
+
+
+
+
 
 
 
@@ -2847,14 +2875,22 @@ addNumbers(l4); //invalid
 Key properties:
 --------------
 
+
+List<? super Integer>
+
+
 1. Write (Allowed)
 
 list.add(10); // Integer allowed, Because all these lists can store Integer
+
+--You can ADD T and its subclasses
+--You CANNOT safely add superclasses
 
 
 2. Read (Restricted):
 
 Object obj = list.get(0); // Only Object allowed, because Compiler doesn't know exact type
+// Not able to read in the lower bound types.
 
 
 
@@ -2874,7 +2910,13 @@ public class Demo{
 
 	public static  void fun1(List<? super Developer> list) {
 		
-		
+		list.add(new Developer()); // Allwoed, because this list can store developer
+
+		//list.add(new Employee()); // Not allowed	
+
+		//Developer dev= list.get(0); //Not allowed, Restricted	
+
+
 		for(Object s:list) {   // biggest type (Reading with Object, not with Developer)
 			
 			System.out.println(s);
@@ -2902,13 +2944,56 @@ public class Demo{
 
 
 
-extends = read
-super = write
+
+
+Another example:
+---------------
+
+package com.chitkara;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Demo {
+
+	public static void fun1(List<? super Employee> list) {
+
+		list.add(new Developer()); //Allowed
+		list.add(new Employee()); // Allowed
+		list.add(new Manager()); //Allowed
+
+		for (Object s : list) { // biggest type (Reading with Object, not with Developer)
+
+			System.out.println(s);
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+		List<Employee> slist = new ArrayList<>(List.of(new Employee(), new Developer()));
+		fun1(slist);
+
+	}
+
+}
+
+
+
+
+
+
+
+
+extends = read, but write is not allowed except null value.
+super = write, but read only with Object class
 
 
 
 Unbounded wildcard:
---------------------------
+-------------------
+
+syntax:
 
 List<?>
 
@@ -2917,7 +3002,7 @@ List<?>
 
 --Unbounded Wildcard (?) means:  "any type"
 
---Unbounded wildcard is used when you don’t care about the type, but still want type safety.
+--Unbounded wildcard is used when you don’t care about the type of the elements, but still want type safety.
 
 --There are two scenarios where using unbounded wildcard is useful.
 
@@ -2928,7 +3013,7 @@ List<?>
 
 List<?> means a list typed to an unknown type. This could be a List<A>, a List<B>, a List<String> etc.
 
-Since  you do not know what type the List is typed to, you can only read from the collection, and you can only treat the objects read as being Object instances. Here is an example:
+Since  you do not know what type the List is typed to, you can only read from the collection but can not add the data, and you can only treat the objects read as being Object instances. Here is an example:
 
 package com.masai;
 
@@ -2950,7 +3035,9 @@ public class Demo{
 	public static void fun2(List<?> list) {
 		
 		 System.out.println("Size: " + list.size()); // no type needed
-        		 list.clear(); // no type needed
+        	 list.clear(); // no type needed
+
+		// list.add(list.get(0)); //Not allowed
 	
 	}
 
@@ -2973,6 +3060,359 @@ public class Demo{
 
 }
  
+
+
+
+Difference between List<?> and List<T>
+--------------------------------------
+
+List<?>:
+
+--The method says:  "I don’t know what type this list holds".
+--You cannot use the type specifically:  use only as Object type.
+--Give me any list, I don’t care what’s inside.
+
+
+
+Example:
+
+public static void fun2(List<?> list) {
+
+    // T value = list.get(0);  // Not allowed
+
+    Object value = list.get(0); //  Only Object allowed
+
+  //list.add(list.get(0)); // Not allowed	
+  //list.add("Hello"); //Not allowed
+
+  list.add(null); // allowed
+	
+}
+
+
+
+List<T>: 
+
+--The method knows the exact type (even if you don’t see it explicitly)
+--That type can be used inside the method
+--Give me a list of some specific type, and I’ll work with that type.
+
+
+
+
+Example:
+
+public static <T> void fun1(List<T> list) {
+
+    T value = list.get(0);   // Allowed
+
+  list.add(list.get(0)); //Allowed
+
+}
+
+
+
+--Here T is not fixed globally, Its value will be decided at method call time:
+
+fun1(List<String>)  :  T = String  
+fun1(List<Integer>)  : T = Integer
+
+
+
+Example:
+
+
+public static <T> T getFirstElement(List<T> list) {
+
+    T value = list.get(0);   
+
+     return value;
+   
+}
+
+
+
+
+
+
+
+Example: Swap Elements in List(any type of Element)
+
+public static <T> void swap(List<T> list, int i, int j) {
+    T temp = list.get(i);
+    list.set(i, list.get(j));
+    list.set(j, temp);
+}
+
+
+
+Note: We cannot perform this operation with List<?> because the compiler does not know the exact type, so methods like set() are not type-safe.
+
+
+
+
+
+Student Task:
+=============
+
+
+1. Pridict the output ?
+
+public static void fun(List<?> list) {
+    list.add(null);
+    list.add("Hello");
+}
+
+
+
+
+
+Options:
+
+A. Both statements compile
+B. Only list.add(null) compiles
+C. Only list.add("Hello") compiles
+D. None compile
+
+
+
+
+Answer: B
+
+Because:
+
+? = unknown type
+Only null fits all types
+
+
+
+
+Q2. Which method calls are valid?
+
+public static void fun(List<? extends Number> list) { 
+
+}
+
+
+Options:
+
+A. fun(new ArrayList<Integer>())
+B. fun(new ArrayList<Double>())
+C. fun(new ArrayList<Object>())
+D. Both A and B
+
+
+
+Answer: D
+
+Rule:
+? extends Number:  Number or its subclasses only.
+
+
+
+
+3. Q3. What happens here ?
+
+public static void fun(List<? extends Number> list) {
+    list.add(10);
+}
+
+
+Options:
+
+A. Compiles successfully
+B. Runtime error
+C. Compile-time error
+D. Works only for Integer list
+
+
+
+Answer: C
+
+Because:
+
+List could be:
+
+List<Integer> or List<Double>
+
+-- Adding 10 (Integer) to List<Double> would break type safety.
+
+
+
+Q4. Which calls are valid?
+
+public static void fun(List<? super Integer> list) { 
+
+}
+
+
+
+Options:
+
+A. fun(new ArrayList<Integer>())
+B. fun(new ArrayList<Number>())
+C. fun(new ArrayList<Object>())
+D. All of the above
+
+
+
+Answer: D
+
+
+Q5. What can be assigned?
+
+
+public static void fun(List<? super Integer> list) {
+    Object obj = list.get(0);
+    Integer i = list.get(0);
+}
+
+
+Options:
+
+A. Both are valid
+B. Only Object obj is valid
+C. Only Integer i is valid
+D. None are valid
+
+
+
+Answer: B
+Because: Compiler only guarantees Object, not Integer.
+
+
+
+
+Q6. Which method compiles ?
+
+
+public static <T> void fun1(List<T> list) {
+    list.add(list.get(0));
+}
+
+public static void fun2(List<?> list) {
+    list.add(list.get(0));
+}
+
+
+Options:
+
+A. Only fun1
+B. Only fun2
+C. Both
+D. None
+
+
+Answer: A
+
+Reason:
+T is known
+? is unknown
+
+
+
+
+Q7. What happens here?
+
+public void fun(List<String> list) {
+
+}
+
+public void fun(List<Integer> list) {
+
+}
+
+
+Options:
+
+A. Both methods compile
+B. Overloading works fine
+C. Compile-time error
+D. Runtime error
+
+
+
+
+Answer: C
+Because of Type Erasure
+
+
+
+Q8. What does this mean?
+
+List<? extends Number>
+
+Options:
+
+A. Can only add elements
+B. Can only read elements
+C. Can read and write both
+D. Cannot do anything
+
+
+
+ Answer: B
+
+
+Q9. Fill in the blank
+
+void print(List<? ___ Number> list)
+
+(Only reading required)
+
+
+
+
+Options:
+
+A. super
+B. extends
+C. T
+D. Object
+
+Answer: B
+
+
+
+
+Q10. What happens here?
+
+List<? extends Number> list = new ArrayList<Integer>();
+Number n = list.get(0);
+
+Options:
+
+A. Compile-time error
+B. Runtime error
+C. Compiles successfully
+D. Works only for Double
+
+
+
+Answer: C
+Because: Whatever comes out is at least a Number.
+
+
+
+
+Q11. What can you add to List<?> ?
+
+A. Any object
+B. Only null
+C. Only String
+D. Only Integer
+
+
+
+
+Answer: B
+
+
+
+
+
+
+
 
 
 
