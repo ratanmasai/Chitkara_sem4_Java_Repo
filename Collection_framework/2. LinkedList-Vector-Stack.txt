@@ -626,7 +626,7 @@ This causes:
 
 
 
-Why ArrayList Is Often Faster: 
+Why ArrayList Is Often Faster than LinkedList: 
 
 
 1. Contiguous Memory Storage
@@ -1156,7 +1156,9 @@ Vector Class in Java
 --Vector class is thread-safe, most of the methods of the Vector class is synchronized.
 
 
-Note: Even though Vector is still available, ArrayList is preferred in modern Java applications unless thread-safety or any backward compatibility is explicitly required.
+
+
+Note: Even though Vector is still available, ArrayList is preferred in modern Java applications unless thread-safety or any backward compatibility ixuired.
 
 
 Constructors:
@@ -1196,9 +1198,10 @@ Note: Vector class is similar to ArrayList class with the following differences:
    - Vector is synchronized (thread-safe)
    - ArrayList is not synchronized
 
+	
 2. Capacity & Growth:
    - Vector default capacity = 10, grows by 100% (doubles)
-   - ArrayList grows dynamically (~1.5x); initial capacity is 0 (grows to 10 on first insertion)
+   - ArrayList grows dynamically (~1.5x); initial capacity 10.
 
 3. Legacy vs Modern:
    - Vector is a legacy class (Java 1.0)

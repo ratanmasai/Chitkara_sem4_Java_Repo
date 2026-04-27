@@ -1,0 +1,2045 @@
+Set in Java:
+============
+
+--Set is a child interface of the Collection interface.
+
+--It represents a collection that does not allow duplicate elements.
+
+--Index concept is not applicable in Set. Therefore, we cannot use methods like get(int index).
+
+--If we try to add a duplicate element, the add() method simply returns false (no exception is thrown).
+
+--Set is mainly used when uniqueness of elements is required.
+
+
+Key Features of Set:
+---------------------
+
+--No duplicates allowed.
+
+--Insertion order is not preserved (in most implementations).
+
+--Does not support index-based access.
+
+--Set does not define any extra methods other than Iterable and Collection interfaces.
+
+
+Main Implementation classes of Set:
+-----------------------------------
+
+HashSet (Most commonly used)
+LinkedHashSet
+TreeSet (SortedSet)
+
+
+HashSet Class:
+--------------
+
+
+--HashSet is the first and most popular implementation of the Set interface.
+
+--It is not synchronized (not thread-safe by default).
+
+--It does not maintain insertion order.
+
+--Elements are stored and retrieved based on their hashCode()  (Hashing mechanism).
+
+--It offers excellent performance for searching (contains()), add(), and remove() operations: average time complexity O(1).
+
+--HashSet also does not have any extra methods.
+
+
+Note: Internally, HashSet uses HashMap to store elements. The element itself is stored as a key in the HashMap, and a dummy object is used as the value.
+
+
+
+Use HashSet when:
+
+1. You need unique elements
+2. Fast lookup required
+3. Order does not matter
+
+
+
+Constructors:
+------------
+
+
+HashSet hs1 = new HashSet<>(); // Default: capacity 16, load factor 0.75
+HashSet hs2 = new HashSet<>(int initialCapacity);
+HashSet hs3 = new HashSet<>(int initialCapacity, float loadFactor);
+HashSet hs4 = new HashSet<>(Collection c);   // Copy any types of Collection
+
+
+Load Factor (Fill Ratio):
+------------------------
+
+--Default value is 0.75.
+
+--When the HashSet is 75% full, A new internal array (table) is created and elements are rehashed.
+
+HashSet<Integer> hs= new HashSet<>(1000,0.8f);
+
+--here initial capacity is 1000 and and once reaches to the 80% then A new internal array(buckets) is created and elements are rehashed.
+
+
+
+
+Important Points:
+-----------------
+
+--Duplicate elements are not allowed.
+
+--Adding duplicate returns false.
+
+--Only one null value is allowed.
+
+--Best choice when frequent searching is required. searching a perticular element based on hashCode will have time complexity O(1).
+
+--Iteration order is unpredictable (not based on insertion order).
+
+
+
+Example:
+
+HashSetDemo.java:
+----------------
+
+
+package com.chitkara;
+import java.util.HashSet;
+
+public class HashSetDemo {
+    public static void main(String[] args) {
+
+        HashSet<Integer> hs = new HashSet<>();
+
+        hs.add(10);
+        hs.add(20);
+        hs.add(30);
+        hs.add(10);     // duplicate ignored
+        hs.add(40);
+        hs.add(null);
+        hs.add(null);   // second null ignored
+
+        System.out.println("Size: " + hs.size());   // 5
+        System.out.println("HashSet: " + hs);   // [null, 20, 10, 30, 40]  (order unpredictable)
+
+        // Checking contains (very fast O(1))
+        System.out.println("Contains 30? " + hs.contains(30));
+        System.out.println("Contains 50? " + hs.contains(50));
+    }
+}
+
+
+
+Iterating HashSet Elements:
+---------------------------
+
+--Since Set has no index, we cannot use normal for loop with index.
+
+1. Enhanced For Loop (Recommended)
+
+for(Integer num : hs) {
+    System.out.println(num);
+}
+
+2. Using Iterator
+
+Iterator<Integer> itr = hs.iterator();
+while(itr.hasNext()) {
+    System.out.println(itr.next());
+}
+
+
+
+
+Polymorphic refererence:
+------------------------
+
+Set<Integer> nums = new HashSet<>(); // recommended way
+
+HashSet<Integer> nums = new HashSet<>();
+
+
+
+
+
+
+
+
+
+
+Object Equality:
+----------------
+
+Consider the following Example:
+
+
+Student.java:
+-------------
+
+
+package com.chitkara;
+
+public class Student {
+
+	private int roll;
+	private String name;
+	private double marks;
+
+	public Student() {
+
+	}
+
+	public Student(int roll, String name, double marks) {
+		super();
+		this.roll = roll;
+		this.name = name;
+		this.marks = marks;
+	}
+
+	
+	//Getters and Setters
+
+
+	@Override
+	public String toString() {
+		return "Student [roll=" + roll + ", name=" + name + ", marks=" + marks + "]";
+	}
+
+}
+
+
+
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+	
+		Student s1 = new Student(10, "Raj", 500);
+		Student s2 = new Student(10, "Raj", 500);
+		
+		
+		System.out.println(s1 == s2);
+		System.out.println(s1.equals(s2));
+		
+		
+		
+		
+		
+	}
+}
+
+
+
+Output:
+
+false
+false
+
+
+Reason:
+
+--The objects created using "new" operator can't be physically equal.
+
+--To make the objects logically equal we need to make use of equals() method of the Object class.
+
+
+public boolean equals(Object obj);
+
+--this method is implemented inside the Object class as follows:
+
+
+public boolean equals(Object obj){
+
+/*
+if(obj == this)
+return true;
+else
+return false;
+*/
+
+return obj == this;
+
+}
+
+
+---In order to make our class objects logically equal we need to override the above equals() method from the Object class to our Student class.
+
+
+Example:
+
+
+Inside Student.java:
+--------------------
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+
+		//Handle edge cases
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if(this.getClass() != obj.getClass())
+			return false;
+		
+
+	
+		Student s1= this;
+		Student s2=  (Student)obj;
+		
+		//if(s1.getRoll() == s2.getRoll()  && s1.getName().equals(s2.getName())  && s1.getMarks() == s2.getMarks() )
+		//	return true;
+		//else
+		//	return false;
+		
+		
+		return (s1.getRoll() == s2.getRoll()  && s1.getName().equals(s2.getName())  && s1.getMarks() == s2.getMarks() );
+		
+
+		
+
+
+
+
+	}
+
+
+
+--We can define any kind of logic by using which we can make objects of Student class logically equal.
+
+Now: 
+
+
+
+		Student s1 = new Student(10, "Raj", 500);
+		Student s2 = new Student(10, "Raj", 500);
+		
+		
+		System.out.println(s1 == s2);
+		System.out.println(s1.equals(s2));
+		
+		
+
+
+Output:
+
+false
+true
+
+
+
+Now, lets add multiple objects of Student class inside the HashSet.
+
+
+Demo.java:
+-----------
+
+
+package com.chitkara;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		Set<Student> students = new HashSet<>();
+
+		students.add(new Student(10, "Raj", 500));
+		students.add(new Student(10, "Raj", 500));
+
+		System.out.println(students.size());
+
+	}
+}
+
+
+Output: 2
+
+Here even though we have overriden the equals() method inside the Student class, but the HashSet class is not treated them identical. Both objects are treated as separate object even though the content is same.
+
+The reason is:
+
+This equals() method has a best friend called hashCode() method, it is also defiend inside the Object class:
+
+	public int hashCode();
+
+--equals() and hashCode() method is like a contract, if we override the equals() method to make our objects logically equal then we have to override the hashCode() method also;
+
+--if we call equals() method to compare two object and if it returns true then those objects hashCode value should also be same.
+
+
+
+
+
+Note: From the add() method of the HashSet class equals() and hashCode() both method is called to identify the object uniqueness:
+
+
+
+Example: Override the hashCode() method also inside the above Student class.
+ 
+
+import java.util.Objects
+
+
+	@Override
+	public int hashCode() {
+	
+		//return roll;
+		return Objects.hash(roll,name,marks);
+	
+	}
+
+
+Now:
+
+
+
+
+Demo.java:
+========
+
+package com.chitkara;
+
+import java.util.Set;
+import java.util.HashSet;
+
+public class Demo {
+
+	public static void main(String[] args) {		
+			
+		Set<Student> hs=new HashSet<>();
+	
+		hs.add(new Student(10, "n1", 780));
+		hs.add(new Student(12, "n2", 880));
+		hs.add(new Student(13, "n3", 980));
+		hs.add(new Student(10, "n1", 780));
+		hs.add(new Student(10, "n1", 780));
+		
+		System.out.println(hs.size());
+
+	}
+
+}
+
+
+Output:
+
+3
+
+--Always override both equals() and hashCode() together when using custom objects in HashSet, HashMap, etc.
+
+Note: String class and all the wrapper classes internally overrides the equals() and hashCode() method.
+
+
+	
+
+
+Important Notes:
+-----------------
+
+1. HashSet is backed by HashMap: add() internally calls map.put(element, PRESENT).
+
+2. Performance: Excellent for add, remove, and contains operations (Average O(1), worst-case O(n) due to collisions).
+
+3. Not suitable when you need to maintain insertion order: Use LinkedHashSet.
+
+4. Not suitable when you need sorted elements: Use TreeSet.
+
+5. Not thread-safe by default. Use Collections.synchronizedSet(new HashSet<>()) if needed.
+
+
+
+
+HashSet Internal working:
+------------------------
+
+--HashSet does not store data directly using array index like ArrayList.
+
+--Instead, it uses:
+
+1. Buckets
+2. Hashing
+3. equals()
+4. hashCode()
+
+
+Analogy:
+
+--Suppose a college has 16 lockers.
+
+--Each student gets locker number based on Roll Number:
+
+	locker = rollNumber % 16
+
+--So students are distributed quickly.
+
+--Same concept is used in HashSet.
+
+
+Internally, HashSet uses: HashMap
+
+When we write:
+
+	HashSet<String> hs = new HashSet<>();
+
+Internally Java creates:
+
+	HashMap<String, Object> 
+
+
+Where:
+
+Your element = Key
+Dummy constant object = Value
+
+
+Example:
+
+{
+   "Delhi" = PRESENT,
+   "Mumbai" = PRESENT,
+   "Chennai" = PRESENT
+}
+
+
+
+Internal Code Concept
+---------------------
+Roughly:
+
+
+public class HashSet<E> {
+
+    private HashMap<E,Object> map;
+
+    private static final Object PRESENT = new Object(); //dummy object
+
+    public boolean add(E e){
+        return map.put(e, PRESENT) == null;
+    }
+}
+
+
+
+--In HashMap, internally buckets of size 16 is created.
+
+--the bucket system is internally based on an array (table), default size 16, and each array index acts as one bucket. where Java places elements based on hash values.
+
+
+Step-by-Step Internal Working of add()
+
+Suppose:
+
+	HashSet<Integer> hs = new HashSet<>();
+
+	hs.add(25);
+
+
+Step 1: hashCode() Called
+
+For Integer:
+
+	25.hashCode() = 25
+
+
+Step 2: (Hashing) Hash Converted to Bucket Index
+
+Suppose capacity = 16
+
+	index = hashCode % 16
+	index = 25 % 16 = 9
+
+
+So element goes to bucket 9.
+
+
+
+Bucket Index:
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9   -> (25, PRESENT)
+10
+11
+12
+13
+14
+15
+
+
+
+Add Another Element
+
+	hs.add(41);
+
+	41 % 16 = 9
+
+Again bucket 9.
+
+
+--Now collision occurs.
+
+
+Collision Handling:
+--------------------
+
+--Both 25 and 41 want same bucket.
+
+--Java stores both using linked nodes (or tree if many collisions).
+
+
+
+Bucket Index:
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9   -> (25,PRESENT) -> (41, PRESENT)
+10
+11
+12
+13
+14
+15
+
+
+
+
+Add Another Element
+
+	hs.add(57);
+
+	57 % 16 = 9
+
+Again bucket 9.
+
+--Now collision occurs: this element also goes to the same bucket:
+
+
+Bucket Index:
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9   -> (25,PRESENT) -> (41, PRESENT) -> (57, PRESENT)
+10
+11
+12
+13
+14
+15
+
+
+
+How Duplicate is Checked: 
+
+Suppose:
+
+hs.add(25);
+hs.add(25); // not added 
+
+
+
+Internal Steps:
+---------------
+
+First add(25): 
+
+hashCode = 25
+bucket = 9
+stored successfully
+
+Second add(25): 
+
+hashCode = 25
+same bucket 9
+existing element found
+Now, equals() called
+25.equals(25) = true
+
+So duplicate rejected.
+
+add() returns false
+
+
+
+Important Rule:
+--------------
+
+--For duplicate detection:
+
+Java uses BOTH:
+
+hashCode()
+equals()
+
+
+Search Operation:  contains() method: hs.contains(41);
+
+Internal Working: 
+
+Step 1:
+
+hashCode = 41
+index = 9
+
+
+Step 2:
+
+Only bucket 9 searched.
+
+--Not entire set.
+
+--That is why searching is fast.
+
+
+Why O(1) Average Time?
+
+--Because Java directly jumps to bucket.
+
+Instead of checking:
+
+25, 41, 57, 99, 110 ...
+
+--It directly checks correct bucket.
+
+So average: O(1)
+
+
+Worst Case O(n): 
+
+--If all elements go same bucket:
+
+Bucket 9:
+
+10 -> 20 -> 30 -> 40 -> 50 -> 60
+
+Then search becomes linear using equals() method: O(n)
+
+--In modern Java versions, if collisions become too many, linked list converts into balanced tree.
+
+So performance improves to: O(log n)
+
+
+
+Advance concept:
+---------------
+
+--In modern Java HashMap / HashSet (since Java 8), a bucket’s collision chain (linked list) may be converted into a balanced tree (red-black tree) when certain thresholds are met.
+
+Main Threshold: 
+
+--When the number of nodes in a single bucket becomes 8 or more, Java considers treeification.
+
+--This constant is internally:
+
+	TREEIFY_THRESHOLD = 8
+
+So if one bucket has:
+
+	A -> B -> C -> D -> E -> F -> G -> H
+
+--then it can convert from linked list to tree.
+
+But There Is One More Important Condition: 
+
+
+--The overall table (internal array) size must be at least 64.
+
+	MIN_TREEIFY_CAPACITY = 64
+
+--If table size is smaller than 64, Java usually prefers resizing the table instead of converting to tree.
+
+So:
+
+Bucket chain reaches 8 nodes AND table capacity >= 64
+
+--Then linked list can become balanced tree.
+
+
+Because: If capacity is small (like 16 or 32), resizing often spreads elements into new buckets and reduces collisions naturally.
+
+--That is cheaper than building a tree.
+
+
+Untreeify Threshold: 
+
+--If a tree bucket later shrinks to 6 or fewer nodes, Java may convert it back to linked list.
+
+UNTREEIFY_THRESHOLD = 6
+
+
+
+How null is Handled in HashSet (Internal Working)
+
+null is allowed in a Java HashSet, but only one null value can be stored because duplicates are not allowed.
+
+Example:
+
+HashSet<String> hs = new HashSet<>();
+
+hs.add(null);   // true
+hs.add(null);   // false
+
+
+Internal Reason:
+
+HashSet uses HashMap internally.
+
+Conceptually:
+
+	map.put(null, PRESENT);
+
+--So null is stored as a key in internal HashMap.
+
+But null.hashCode() Causes NullPointerException
+
+--So Java HashSet and HashMap handles null specially.
+
+Special Rule for null:
+
+--Inside HashMap, if key is null, Java directly assigns:
+
+hash = 0
+
+--So null always maps to bucket related to hash 0.
+
+--So null usually goes into:
+
+bucket 0
+
+
+Student Task:
+==============
+
+Remove the duplicates from the following List
+
+List<String> cities = new ArrayList<>(List.of("delhi", "mumbai", "chennai", "delhi", "kolkata", "mumbai"));
+
+
+
+Solution:
+
+Set<String> uniqueCities = new HashSet<>(cities);
+
+System.out.println(uniqueCities);
+
+
+Note: Here it does not preserve the sequence order, If we need to preserve the sequence order then we need to make use of LinkedHashSet class instead of HashSet class.
+
+
+
+Example:
+
+
+Set<String> uniqueCities = new LinkedHashSet<>(cities);
+
+System.out.println(uniqueCities);
+
+
+
+LinkedHashSet:
+=============
+
+
+--LinkedHashSet is a child class of HashSet and an implementation of the Set interface.
+
+It is similar to HashSet but with one major difference:
+
+--It maintains the insertion order of elements.
+
+--While HashSet does not guarantee any order, LinkedHashSet preserves the sequence in which elements were added.
+
+--It is the best choice when you need uniqueness + insertion order.
+
+
+
+
+Internal Working:
+-----------------
+
+--LinkedHashSet internally uses a LinkedHashMap.
+
+--Additionally, it maintains a doubly-linked list running through all its entries.
+
+--This linked list is responsible for maintaining the insertion order.
+
+
+
+--Performance is slightly slower than HashSet due to the extra overhead of maintaining the linked list.
+
+--Supports fast operations: add(), remove(), contains():  average O(1) time complexity.
+
+
+
+Student task: 
+============
+
+1. Remove duplicate from the String:
+
+	public static String removeDuplicateFromString(String original) {
+
+
+
+
+Solution:
+---------
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+
+public class Demo {
+		
+			
+	
+		public static String removeDuplicateFromString(String original) {
+			
+			char[] chr= original.toCharArray();
+			
+			LinkedHashSet<Character> lhs=new LinkedHashSet<>();
+			
+			for(char ch:chr) {
+				
+				lhs.add(ch);
+			}
+			
+			StringBuilder result= new StringBuilder("");
+			
+			
+			for(char ch: lhs) {
+				result.append(ch);
+			}
+			
+			
+			
+			return result.toString();
+			
+			
+		}
+	
+	
+	
+	
+	public static void main(String[] args) {
+				
+	
+		
+		String s= Demo.removeDuplicateFromString("chitkara");
+		
+		System.out.println(s);
+	
+
+	}
+
+}
+
+
+
+2. Check Duplicate Exists or Not
+
+
+	public static boolean isDuplicateExist(int[] arr)
+
+
+Solution:
+--------
+
+
+
+	public static boolean isDuplicateExist(int[] arr){
+
+		boolean flag = false;
+
+		HashSet<Integer> hs = new HashSet<>();
+	
+		   for(int num : arr){
+            		 if(hs.add(num) == false){
+                	     flag = true;
+                	     break;
+            	  	}
+        	  }
+		
+		return flag;
+
+	}
+
+
+
+3. Find Common Elements Between Two Arrays
+
+
+	public static void findCommon(int[] arr1, int[] arr2)
+
+
+
+Solution:
+---------
+
+
+public static void findCommon(int[] arr1, int[] arr2){
+
+
+	HashSet<Integer> hs = new HashSet<>();
+
+        for(int num : arr1){
+            hs.add(num);
+        }
+
+        for(int num : arr2){
+            if(hs.contains(num)){
+                System.out.println(num);
+            }
+        }
+
+}
+
+
+
+
+4. Count Unique Words:
+
+	public static int countUniqueWord(String str)
+
+
+Solution:
+--------
+
+
+	public static int countUniqueWord(String str){
+
+
+	 	String[] words = str.split(" ");
+
+        	 HashSet<String> hs = new HashSet<>();
+
+        	 for(String word : words){
+           		 hs.add(word);
+        	}
+
+		return hs.size();
+	}
+
+
+5. Returns the second non-repeating character from a string.
+
+
+Input:  "swiss"
+Output: 'i'
+
+
+ public static char secondNonRepeating(String str)
+
+
+
+
+Solution:
+---------
+
+
+ public static char secondNonRepeating(String str) {
+
+        LinkedHashSet<Character> unique = new LinkedHashSet<>();
+
+        HashSet<Character> duplicate = new HashSet<>();
+
+	char[] chr = str.toCharArray();
+
+        for(char ch : chr) {
+
+            if(duplicate.contains(ch) == false && unique.contains(ch) == false) {
+                unique.add(ch);
+            }
+            else {
+                unique.remove(ch);
+                duplicate.add(ch);
+            }
+        }
+
+        int count = 0;
+
+        for(char ch : unique) {
+            count++;
+
+            if(count == 2)
+                return ch;
+        }
+
+        return '\0';
+    }
+
+
+
+
+6. Remove duplicate characters from string while keeping the last occurrence of each character.
+
+
+Input:  "abacabad"
+Output: "cbad"
+
+
+Logic:
+
+--Traverse string from right to left.
+
+--Use HashSet to track visited chars.
+
+--Use StringBuilder.
+
+
+public static String keepLastOccurrence(String str)
+
+
+
+Solution:
+---------
+
+
+ public static String keepLastOccurrence(String str) {
+
+        HashSet<Character> set = new HashSet<>();
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = str.length()-1; i >= 0; i--) {
+
+            char ch = str.charAt(i);
+
+            if(set.contains(ch) == false) {
+                set.add(ch);
+                sb.append(ch);
+            }
+        }
+
+        return sb.reverse().toString();
+    }
+
+
+
+
+
+
+
+
+
+
+TreeSet class:
+==============
+
+
+--TreeSet class is the another implementation of Set interface.
+
+Hierarchy:
+
+Iterable
+   |
+Collection
+   |
+  Set
+   |
+SortedSet
+   |
+NavigableSet (provides powerful navigation methods)
+   |
+TreeSet
+
+
+--Insertion order is not preserved.
+
+--It stores elements in sorted order (either natural sorting order or custom sorting order).
+
+--Duplicates are not allowed.
+
+--It is implemented using a Red-Black Tree (a self-balancing binary search tree).
+
+--Even a single Null value is also not allowed: because comparisons are required. Adding null usually throws NullPointerException.
+
+
+Best Choice When:
+
+--You want elements in sorted order.
+
+--You need fast retrieval of first/last elements or range-based operations.
+
+
+
+
+Time Complexity:
+----------------
+
+add(), remove(), contains(): O(log n) time complexity.
+
+
+
+
+Constructors:
+-------------
+
+TreeSet<E> ts1 = new TreeSet<>();  // Natural ordering
+TreeSet<E> ts2 = new TreeSet<>(Comparator<? super E> c); // Custom sorting using Comparator
+TreeSet<E> ts3 = new TreeSet<>(Collection<? extends E> c);
+TreeSet<E> ts4 = new TreeSet<>(SortedSet<E> s);
+
+
+
+Example:
+--------
+
+
+TreeSetDemo.java:
+-----------------
+
+
+package com.chitkara;
+
+import java.util.TreeSet;
+
+public class TreeSetDemo {
+    public static void main(String[] args) {
+
+        TreeSet<Integer> ts = new TreeSet<>();
+
+        ts.add(10);
+        ts.add(2);
+        ts.add(5);
+        ts.add(12);
+        ts.add(6);
+        ts.add(15);
+
+        System.out.println(ts);        // [2, 5, 6, 10, 12, 15] automatically sorted
+
+        TreeSet<String> cities = new TreeSet<>();
+        cities.add("Delhi");
+        cities.add("Mumbai");
+        cities.add("Chennai");
+        cities.add("Kolkata");
+        cities.add("Chandigarh");
+
+        System.out.println(cities);    // [Chandigarh, Chennai, Delhi, Kolkata, Mumbai]
+    }
+}
+
+
+
+
+Note: If we try to add any element inside the TreeSet object, then those elements should be comparable. i.e That object class should implements "java.lang.Comparable" interface. otherwise we will get a ClassCastException at runtime.
+
+
+Note: All the Wrapper classes and String class implements Comparable interface.
+
+
+Example:
+
+
+TreeSet<Student> students = new TreeSet<>();
+
+students.add(new Student(10,"Raj",800)); // throws ClassCastException, if Student class is not comparable.
+
+
+
+
+
+
+Comparable interface:
+=====================
+
+--This interface belongs to java.lang package.
+
+--By using this interface, we will specify the sorting rules/technique inside the class.
+
+--This interface is having only one abstract method:
+
+	public int compareTo(Object obj);
+
+--if we try to add any class object inside the TreeSet, then that class must implement Comparable interface and override this compareTo method. And inside this method we need to specify the sorting logic of that class object.
+
+
+
+
+Example:
+
+--TreeSet class internally call this compareTo() method to sort the elements.
+
+currentObject.compareTo(obj2):-
+
+returns -ve when currentObject has to place before obj2: obj2 >greter than currentObject
+
+returns +ve when currentObject has to place after obj2. obj2 <less than currentObject.
+
+return 0 when currentObject and obj2 both are equal.
+
+
+
+
+
+
+Example:
+
+Student.java:
+------------
+
+package com.chitkara;
+
+public class Student implements Comparable<Student> {
+    private int roll;
+    private String name;
+    private int marks;
+
+
+    //Default constructor
+    public Student() {
+     
+    }
+
+
+    //Parameterized construction
+    public Student(int roll, String name, int marks) {
+        this.roll = roll;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    //Getters and Setters
+
+    @Override
+    public int compareTo(Student s2) {
+
+	Student s1= this;
+	
+	if(s1.marks > s2.marks)
+		return +1;
+	else if(s1.marks < s2.marks)
+		return -1;
+	else
+		return 0;
+
+	//return Integer.compare(s1.marks, s2.marks);
+	
+
+    }
+
+    @Override
+    public String toString() {
+        return "Student [roll=" + roll + ", name=" + name + ", marks=" + marks + "]";
+    }
+}
+
+
+
+
+
+--The above sorting logic is based on the marks.
+
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.util.TreeSet;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		TreeSet<Student> ts = new TreeSet<>();
+		
+		ts.add(new Student(101, "Amit", 85));
+		ts.add(new Student(102, "Priya", 92));
+		ts.add(new Student(103, "Rahul", 78));
+		ts.add(new Student(105, "Suresh", 78));
+		
+		System.out.println(ts);   // Sorted by marks
+		System.out.println(ts.size());
+	}
+}
+
+
+
+
+Note: In order to check the object uniqueness HashSet and LinkedHashSet class uses equals() and hashCode() methods 
+whereas TreeSet uses Comparable()/Comparator for both sorting and duplicate checking.
+If compareTo() method of Comparable or compare() method of Comparator returns 0, elements are treated as duplicates.
+
+ 
+
+
+sort the students based on name:
+-------------------------------
+
+
+	@Override
+	public int compareTo(Student s) {
+		
+		return this.getName().compareTo(s.getName());
+		
+		
+	}
+
+
+
+In reverse order:
+------------------
+
+@Override
+	public int compareTo(Student s) {
+		
+		return s.getName().compareTo(this.getName());	
+	}
+
+
+
+If Marks are same then sort them according to their name:
+---------------------------------------------------------
+
+	@Override
+	public int compareTo(Student s2) {
+
+    		int result = Integer.compare(this.marks, s2.marks);
+
+    		if (result == 0) {
+        		return this.name.compareTo(s2.name);
+    		}
+    		
+		return result;
+}
+
+
+
+
+Note: If we want to sort the students based on marks, and if 2 students get the same marks then we will miss the 2nd student object because if the compareTo() method returns the 0 then TreeSet class treat it as duplicate element and it will ignore that object.
+
+--In that case, we must compare one more field when marks are same to preserve the 2nd student:
+
+Example: marks + roll
+
+
+
+
+	@Override
+	public int compareTo(Student s2) {
+
+    		int result = Integer.compare(this.marks, s2.marks);
+
+    		if (result == 0) {
+        		return Integer.compare(this.roll, s2.roll);
+    		}
+    		
+		return result;
+}
+
+
+
+
+
+java.util.Comparator(I):
+========================
+
+--By using this interface, we can define the sorting logic for a class objects from the outside of that class.
+
+Note: If we want to define a sorting logic of a class objects inside the same class then we should use java.lang.Comparable interface.  whereas if we want to define the sorting logic outside of that class then we need to use java.util.Comparator interface.
+
+--With the help of Comparable we can define only one sorting logic, where as with the help of Comparator we can define multiple custom sorting logic.
+
+
+--This Comparator interface has also only one abstract method:
+
+	public int compare(Object obj1, Object obj2);
+
+
+
+Steps to use the Comparator:
+-----------------------------
+
+step 1: Here we need not pollute/modify the Student class(Java bean class) by implementing Comparable interface and overriding the compareTo() method.
+
+step 2: Create a seperate class by any name and implements the Comparator interface and define the sorting logic by overriding the compare(--) method.
+
+
+
+Example:
+
+StudentMarksComp.java:
+---------------------
+
+package com.chitkara;
+
+import java.util.Comparator;
+
+public class StudentMarksComp implements Comparator<Student>{
+
+	@Override
+	public int compare(Student s1, Student s2) {
+		
+		if(s1.getMarks() > s2.getMarks())
+			return +1;
+		else if(s1.getMarks() < s2.getMarks())
+			return -1;
+		else
+			return 0;
+		
+	}
+
+}
+
+
+Step 3:
+
+--Create the above StudentMarksComp class object and pass that object to the constructor of the TreeSet class.
+
+
+		StudentMarksComp mcomp = new StudentMarksComp();
+		TreeSet<Student> ts= new TreeSet<>(mcomp);
+
+		//or
+
+		//TreeSet<Student> ts= new TreeSet<>(new StudentMarksComp());
+
+
+
+		ts.add(new Student(10, "n1", 780)); //s1
+		ts.add(new Student(12, "n2", 680)); //s2
+		ts.add(new Student(13, "n5", 480));
+		ts.add(new Student(14, "n4", 480));
+		ts.add(new Student(15, "n3", 480));
+	
+		
+		
+		System.out.println(ts.size());
+		
+		System.out.println(ts);
+
+
+
+
+sorting according to the name:
+-----------------------------
+
+package com.chitkara;
+
+import java.util.Comparator;
+
+public class StudentNameComp implements Comparator<Student>{
+
+	@Override
+	public int compare(Student s1, Student s2) {
+		
+		return s1.getName().compareTo(s2.getName());
+		
+	}
+
+}
+
+
+Note: Since Comparator is a functional interface, we can represent its implementation using Lambda Expression also.
+
+
+Example:
+
+Sorting by marks:
+-----------------
+
+TreeSet<Student> ts= new TreeSet<>(new StudentMarksComp());
+
+Using Lambda Expression:
+
+
+Comparator<Student> byName = (s1, s2) -> Integer.compare(s1.getMarks(), s2.getMarks());
+
+TreeSet<Student> ts = new TreeSet<>(byName);
+
+or
+
+TreeSet<Student> ts= new TreeSet<>((s1, s2) -> Integer.compare(s1.getMarks(), s2.getMarks()));
+
+or
+
+TreeSet<Student> ts= new TreeSet<>((s1, s2) -> s1.getMarks() - s2.getMarks()); // May have the oveflow issue if the numbers are very large or 2nd number is negetive
+
+
+
+
+Sorting by name:
+-----------------
+
+TreeSet<Student> ts= new TreeSet<>((s1, s2) -> s1.getName().compareTo(s2.getName()));
+
+
+
+
+Important methods of SortedSet interface:
+=========================================
+
+
+Object first():- returns the first element
+
+Object last():- returns the last element
+
+SortedSet subSet(E fromElement,E toElement);return view of the portion of specified range.
+
+SortedSet headSet(E toElement):- return view of the portion less than specified element.
+
+SortedSet tailSet(E fromElement):- return view of the portion grater than or equal to specified element 	
+
+
+example:
+
+--suppose we have a sorted set like this:
+
+
+100
+101
+102
+104
+106
+110
+115
+
+
+
+now:-
+
+
+first()---100
+
+last()----115
+
+headSet(106)-----[100,101,104]
+
+tailSet(106)-----[106,110,115]
+
+subSet(102,110)---[102,104,106]
+
+
+
+
+Important methods of NavigableSet interface:
+============================================
+
+
+NavigableSet(I):-This interface is included in java1.6 version,it gives the navigation support for our set.
+
+Example:-
+
+E ceiling(E e):- Returns the least element in this set greater than or equal to the given element, or  null if there is no such element.
+
+E floor(E e):-Returns the greatest element in this set less than or equal to the given element, or null if there is no such element.
+
+E higher(E e):-Returns the least element in this set strictly greater than the given element, or null if there is no such element
+
+E lower(E e):-Returns the greatest element in this set strictly less than the given element, or null if there is no such element. 
+
+E pollFirst():-Retrieves and removes the first (lowest) element, or returns null if this set is empty.
+
+E PollLast():-Retrieves and removes the last (highest) element, or returns null if this set is empty.
+
+
+
+
+
+suppose we have a sorted set like this:-
+
+
+100
+101
+102
+104
+106
+110
+115
+
+
+
+now:-
+
+
+lower(103);//102
+lower(110);//106
+
+higher(103)//104
+higher(110)//115
+
+ceiling(103);//104
+ceiling(110);//110
+
+floor(103);//102
+floor(110)//110
+
+
+
+
+
+
+
+
+
+
+Sorting a List:
+===============
+
+
+--To sort the elements inside a List (ArrayList, LinkedList, Vector) we have following 2 options:
+
+1. Using java.util.Collections.sort() method
+
+2. Using sort() method on the List object. // Modern way from Java 8
+
+
+
+Example: Collections.sort()
+
+
+Collections.sort(List) // Natural sorting
+Collections.sort(List, Comparator); // Custom sorting
+
+
+List<Student> students = new ArrayList<>();
+
+students.add(new Student(10,"Raj", 780));
+students.add(new Student(11,"Simran", 980));
+students.add(new Student(12,"Rahul", 480));
+students.add(new Student(13,"Priya", 680));
+
+
+Collections.sort(students, (s1, s2) -> Integer.compare(s1.getMarks(), s2.getMarks()));
+
+or
+
+Collections.sort(students, (s1, s2) -> {
+
+if(s1.getMarks()>s2.getMarks())
+	return +1;
+else if(s1.getMarks() < s2.getMarks())
+	return -1;
+else
+	return 0;
+
+});
+
+
+Example: sort() method of List object
+--------------------------------------
+
+
+listObj.sort(comparator)
+
+
+
+
+List<Student> students = new ArrayList<>();
+
+students.add(new Student(10,"Raj", 780));
+students.add(new Student(11,"Simran", 980));
+students.add(new Student(12,"Rahul", 480));
+students.add(new Student(13,"Priya", 680));
+
+
+
+students.sort((s1, s2) -> Integer.compare(s1.getMarks(), s2.getMarks()));
+
+or
+
+students.sort((s1,s2) -> s1.getMarks() - s2.getMarks()); // My cause the overflow issue
+
+
+
+Note: for Natural sorting order we can use sort(null);
+
+Example:
+
+List<Integer> nums= new ArrayList<>(List.of(10,2,3,5,12,5));
+	
+nums.sort(null);
+		
+System.out.println(nums);
+		
+
+
+
+Various implementation of Comparator and their effect:
+======================================================
+
+
+import java.util.Comparator;
+
+public class MyComparable implements Comparator<Integer> {
+    
+    @Override
+    public int compare(Integer x, Integer y) {
+        if (x < y) {
+            return +1;  // x is placed after y
+        } else if (x > y) {
+            return -1;  // x is placed before y
+        } else {
+            return 0;   // x and y are treated as duplicates
+        }
+    }
+}
+
+
+--When adding elements to a TreeSet (e.g., inserting 10, 0, 15, 4, 10), the return value of the compare() method strictly dictates how the tree is built.
+
+Here is how different return statements affect the final output:
+
+
+1. return x.compareTo(y): Natural Sorting Order: Standard ascending order. Duplicates are removed: [0, 4, 10, 15]
+
+2. return -x.compareTo(y); (or y.compareTo(x)): Descending Order: Reverse of natural sorting. Duplicates are removed.[15, 10, 4, 0]
+
+3. return +1; Insertion Order: Every new element is treated as "greater than" the existing elements. Duplicates are allowed because 0 is never returned. [10, 0, 15, 4, 10]
+
+4. return -1; Reverse Insertion Order: Every new element is treated as "less than" the existing elements. Duplicates are allowed because 0 is never returned. [10, 4, 15, 0, 10]
+
+5. return 0; First Element Only: Every new element is treated as an exact duplicate of the first element. Only the first element is added; the rest are rejected. [10]
+
+
+Important Note:  While returning a constant +1 or -1 only allows a TreeSet to store duplicates and preserve insertion/reverse-insertion order, it effectively breaks the rules of a mathematical Set and turns the underlying Red-Black Tree into a skewed, unbalanced LinkedList.
+
+
+
+
+Difference between Comparable and Comparator:
+=============================================
+
+| Feature               | Comparable   | Comparator    |
+| --------------------- | ------------ | ------------- |
+| Package               | java.lang    | java.util     |
+| Method                | compareTo()  | compare()     |
+| Sorting defined       | Inside class | Outside class |
+| No. of sorting logics | One          | Multiple      |
+| Modification needed   | Yes          | No            |
+
+
+
+
+Note: Comparable provides the default (natural) sorting order inside the class, whereas Comparator allows us to override that order and define custom sorting from outside the class.
+
+
+
+
+
+Student Task:
+=============
+
+
+1. sort the following list in decending order
+
+
+List<Integer> nums= new ArrayList<>(List.of(10,2,3,5,12,5));
+
+
+
+Solution:
+---------
+
+ List<Integer> nums = new ArrayList<>(List.of(10,2,3,5,12,5));
+
+ nums.sort(Comparator.reverseOrder());
+//Collections.sort(nums, Comparator.reverseOrder());
+//nums.sort((a,b) -> b.compareTo(a));
+
+ System.out.println(nums);
+
+
+
+2. Product Catalog using Multiple Comparators
+
+--Create a Product bean class with the following properties:
+
+id
+name
+price
+quantity
+
+Requirements:
+
+--Create 10 Product objects and store them inside an ArrayList<Product>.
+
+--Display the products using a menu-driven program:
+
+1. Sort by Product Name
+2. Sort by Price
+3. Sort by Quantity
+4. Sort by Product ID
+0. Exit
+
+Use Comparator for all sorting operations.
+By default, products should be sorted by Product ID.
+After every choice, display the sorted product list.
+
+
+
+
+Solution:
+---------
+
+Product.java:
+------------
+
+package com.chitkara;
+public class Product{
+
+
+    private int id;
+    private String name;
+    private double price;
+    private int quantity;
+
+// zero argument constructor
+// parameterized constructor
+// getters and setters
+// toString method
+
+
+}
+
+
+
+
+
+
+Demo.java:
+---------
+
+package com.chitkara;
+public class Demo{
+
+
+public static void display(List<Product> products) {
+
+        System.out.println("-----------------------------------");
+        System.out.println("ID   Name     Price   Quantity");
+        System.out.println("-----------------------------------");
+
+        for(Product p : products) {
+            System.out.println(p);
+        }
+
+        System.out.println();
+    }
+
+}
+
+
+ public static void main(String[] args) {
+
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product(104, "Mouse", 500, 20));
+        products.add(new Product(101, "Laptop", 55000, 5));
+        products.add(new Product(110, "Keyboard", 1200, 15));
+        products.add(new Product(106, "Monitor", 15000, 8));
+        products.add(new Product(103, "PenDrive", 800, 25));
+        products.add(new Product(109, "Printer", 9000, 4));
+        products.add(new Product(102, "Tablet", 25000, 7));
+        products.add(new Product(108, "Speaker", 3000, 10));
+        products.add(new Product(105, "Router", 2200, 12));
+        products.add(new Product(107, "Camera", 45000, 3));
+
+        Scanner sc = new Scanner(System.in);
+
+        while(true) {
+
+            System.out.println("1. Sort by Name");
+            System.out.println("2. Sort by Price");
+            System.out.println("3. Sort by Quantity");
+            System.out.println("4. Sort by ID");
+            System.out.println("0. Exit");
+
+            System.out.print("Enter Choice: ");
+            int choice = sc.nextInt();
+
+            switch(choice) {
+
+                case 1:
+                    products.sort(
+                        (p1, p2) ->
+                        p1.getName().compareTo(p2.getName())
+                    );
+                    display(products);
+                    break;
+
+                case 2:
+                    products.sort(
+                        (p1, p2) ->
+                        Double.compare(
+                            p1.getPrice(),
+                            p2.getPrice()
+                        )
+                    );
+                    display(products);
+                    break;
+
+                case 3:
+                    products.sort(
+                        (p1, p2) ->
+                        Integer.compare(
+                            p1.getQuantity(),
+                            p2.getQuantity()
+                        )
+                    );
+                    display(products);
+                    break;
+
+                case 4:
+                    products.sort(
+                        (p1, p2) ->
+                        Integer.compare(
+                            p1.getId(),
+                            p2.getId()
+                        )
+                    );
+                    display(products);
+                    break;
+
+                case 0:
+                    System.out.println("Thank You");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid Choice\n");
+            }
+        }
+    }
+}
