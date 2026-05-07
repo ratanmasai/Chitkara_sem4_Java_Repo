@@ -2746,7 +2746,7 @@ Can work as Queue
 Can work as Stack
 Duplicate elements allowed
 Null depends on implementation (In LinkedList allowed but in ArrayDeque not allowed)
-Faster than legacy Stack
+Faster than legacy Stack class
 
 
 
@@ -2912,6 +2912,9 @@ Meaning:
 --Array size grows automatically
 --Front and rear move circularly
 --Supports double-ended operations
+
+
+Formula for circular array: nextIndex = (currentIndex + 1) % size
 
 
 
@@ -3116,8 +3119,8 @@ Implementing Queue: FIFO (Deque Style):
 	Deque<Integer> nums = new ArrayDeque<>();
 		
 		
-		nums.offer(100);
-		nums.offer(80);
+		nums.offerLast(100);
+		nums.offerLast(80);
 		nums.offer(200);
 		nums.offer(25);
 		nums.offer(70);

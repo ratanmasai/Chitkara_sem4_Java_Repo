@@ -1,0 +1,3993 @@
+
+
+Stream API : it is used to perform the functional programming, and it is introduced in Java 8
+----------
+
+--In this API, java.util.Stream is the main interface.
+
+--IO Stream: 
+
+
+
+
+File class in Java:
+===================
+
+
+--File class is used to know the characteristics of something present in the harddisk.
+
+--this class belongs to java.io package.
+
+
+--The java.io.File class has many functinality which are used to identify the features/properties of a file or folder present in given location.
+
+--File class object does NOT store file data, It only stores:
+
+Path
+Metadata
+
+
+
+
+
+Example:
+
+
+	File f=new File("abc.txt");
+
+
+--The above line will not create any physical file.
+
+--If that file is already exist then f will point to that file.
+
+--if that file is not exist then it won't create a new file and here f simply represent name of the file.
+
+
+Example:
+
+
+
+System.out.println(f.exists()); //false..
+
+f.createNewFile(); // creates a new File inside the current location.
+
+System.out.println(f.exist()); //true
+
+
+
+
+Note: A file Object can be used to represent a directory (folder) also.
+
+Example:
+
+
+File f=new File("myfolder");
+
+
+System.out.println(f.exists());//false.
+
+
+f.mkdir(); //create a new folder inside the current location.
+
+System.out.println(f.exists()); //true
+
+
+
+
+
+
+File class constructor:
+-----------------------
+
+1. File f=new File(String path); //Direct path to the file/folder.	
+
+Example:
+
+new File("C:/data/test.txt"): // absolute path
+
+new File("test.txt"): // relative path
+
+
+
+2. File f=new File(String subdir,String fname);
+
+Example:
+
+new File("C:/data", "test.txt")
+
+
+3. File f=new File(File subdir,String fname);
+
+--Uses an existing File object as the parent.
+
+Example:
+
+File f2 = new File("myDir"); // representing a directory
+
+
+new File(f2, "test.txt");
+
+
+
+
+Task:
+-----
+
+Write a program to create a folder called "folder1" and inside the "folder1" directory create a new file called "myfile.txt"
+
+
+Solution:
+
+Demo.java:
+-----------
+
+
+package com.chitkara;
+
+import java.io.File;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+		File folderFile = new File("folder1");
+
+		folderFile.mkdir();
+
+		File file = new File("folder1", "myfile.txt");
+
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("done..");
+
+	}
+}
+
+
+
+
+Some of the important methods of the File class:
+------------------------------------------------
+
+
+1. boolean exists(); //Does the path actually exist on the disk?
+
+2. boolean createNewFile(); //Atomically creates a new, empty file. Returns false if the file already exists.
+
+3. boolean mkdir(); //Creates a directory. Fails if the parent folder doesn't exist.
+
+4. boolean mkdirs():  creates nested folders
+
+5. boolean delete(): // Removes the file or empty directory.
+
+6. boolean isFile(); 
+
+7. boolean isDirectory();
+
+8. boolean canRead();
+
+9. public boolean canWrite();
+
+10. boolean isHidden(): //Is the file marked as hidden by the OS?
+
+11. long length(); //Size in bytes. (Note: Returns 0L for directories or non-existent paths).
+
+
+12. String[] list(); //list out all the file and folders present in the specified directory in the form of String array(only file names without path name)
+
+13. File[] listFiles(); //list out all the files and folders in the form of File array.(file names with full path)
+
+14. String getName();// return the name of the file.
+
+15. String getAbsolutePath(); //Returns the full path from the root (e.g.,"C:\users\admin\myfile.txt").
+
+
+16. String getParent(); // Returns the parent directory (folder path) of the file.
+
+17. String getPath();  //Returns the relative path of the file.
+
+
+
+Task:
+-----
+
+1. Write a program to display only the files present inside the e:/(e drive).
+
+
+
+Solution: with File array:
+
+
+public class FilesTest {
+
+	public static void main(String[] args) throws IOException {
+
+		File f = new File("e:/");
+
+		File fr[] = f.listFiles();
+
+		for(File ff:fr){
+			if(ff.isFile())
+				System.out.println(ff.getName());
+		}		
+	}
+}
+
+
+
+Task2:
+
+--Write a program to access all the files only, from directories as well as subdirectories
+
+
+Solution:
+
+
+public class Demo {
+
+	static void listAllFiles(File f) throws IOException {
+
+		File items[] = f.listFiles();
+
+		if(items == null){
+			return;
+		}
+			
+
+		for (File item : items) {
+            		if (item.isDirectory()) {
+               	
+                		System.out.println("Entering Folder: " + item.getAbsolutePath());
+                		listAllFiles(item); 
+            		} else {
+               	
+                		System.out.println("File: " + item.getName() + " (" + item.length() + " bytes)");
+            		}
+        	}
+
+
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		File startDir = new File("C:/MyProject"); // Change to your path
+
+        	if (startDir.exists()) {
+            		listAllFiles(startDir);
+        	} else {
+            		System.out.println("Path not found.");
+        	}
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+IO Streams:
+===========
+
+
+
+Stream:
+--------
+
+--A stream is an abstraction that represents a flow of data from a source to a destination.
+
+--Here the flow of data is in between the program and peripheral (devices)hence the name I/O Stream.
+
+--So in Java programming whenever we need to make a data transfer we use Streams.
+
+
+In Java, a stream is an abstraction used to read/write data between:
+
+Program <-> File
+Program <-> Memory
+Program <-> Network
+Program <-> Device
+
+
+
+--in Java all classes using which we make the data transfer are present in java.io and java.nio package.
+
+
+--For data transfer to be done first of all the data should be represented in its low-level equalivent i.e either in the form of bytes(8-bit) or in the form of charecters(16-bits).
+
+
+
+--Depending upon the representation of the data to be transfered,The classes in the java.io package are classified into two categories:
+
+
+1.Byte Oriented Classes
+2.Charecter Oriented Classes.
+
+--These two classes further divided into two categories 
+
+1. Classes using which we can read the data.
+2. Classes using which we can write the data.   
+
+
+---InputStream class is the super class of all the classes using which we can read the data from source in the form of bytes.
+
+---OutputStream class is the super class of all the classes using which we can write the data to the destination in the form of bytes.
+
+---Reader class is the super class of all the classes using which we can read the data from source in the form of Chaerecters.
+
+---Writer class is the super class of all the classes using which we can write the data to the destination in the form of Cherecters.
+
+
+--The source and destination may be a file, an array, console,peripheral device or socket..
+
+
+refer: IO_Stream_classes.jpg
+
+
+
+
+
+Note:-If the last part of the name of the class is Stream then we can say that it is byte oriented class.
+Example:DataInputStream,FileInputStream,PrintStream, etc.
+
+--If the last part of the name of the class is Reader/Writer then we can say that given class is CharecterOriented class
+Example:BufferdReader, FileWriter..etc.
+
+---This may not be 100% true always.
+
+
+
+----Whenever,it is required to transfer the data,then we should mention from where to where the transfer is to be made,ie we should mention the address of the source and destination.
+
+
+
+
+Q/- How can we represent the address ?
+
+
+A/- By creating object of these classes which contains the address of the source and destinations.
+
+like, 
+
+InputStream class object is used to represent address of the source. 
+OutputStream class object is used to represent address of the destination,by using which we can trannsfer the data in the form of bytes.
+
+simmillarly,
+
+Reader class object is used to represent address of the sourse and Writer class obj is used to represent addesss of the destination,by using which we can transfer data in the form of charecter.
+
+
+Charecter-Oriented class:-
+==========================
+
+--Used for text data only like: 
+
+Strings
+Text files
+CSV
+
+Note: Character streams use encoding (UTF-8, etc.) to convert characters into bytes.
+
+
+Reader and Writer classes:-
+------------------------------
+
+
+--These are the Super classes of all the classes by using which we can read and write charecter oriented data.
+
+
+
+FileWriter:
+-----------
+
+
+---By using this class we can write charecter data ot the file.
+
+FileWriter fw=new FileWriter(String filename);
+FileWriter fw=new FileWriter(String filename,boolean flag); //append mode
+
+or
+
+FileWriter fw=new FileWriter(File f);
+FileWriter fw=new FileWriter(File f,boolean flag);
+
+Note: If the specified file is not available then above constructor will create a new file.
+
+
+Methods of the FileWriter:
+--------------------------
+
+1. write(int ch): To write a single character to the file.
+
+2. write(char ch[]): To write an array of charecter to the file.
+
+3. write(String s): to write a string to the file.
+
+4. flush(): to give the guarantee that last charecter of data also added to the file.
+
+5. close(): to close the current opened file.
+
+
+
+Note: The main limitation of the FileWriter is while writing the data we have to insert line-seperator..("\n")..or("\r\n")
+and this line-seperator is varied from os to os.
+
+
+Example:
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) throws IOException {
+
+		FileWriter fw = new FileWriter("abc.txt", true);
+
+		fw.write(100);// d will be added
+		fw.write("ramesh\nwelcome");
+		fw.write("\n");
+		fw.write("Odissa");
+		char ch[] = { 'a', 'b', 'c' };
+		fw.write(ch);
+		fw.write("\n");
+		fw.flush();
+		fw.close();
+	}
+
+}
+
+
+
+
+Better and recommended way: (try with resource)
+---------------------------
+
+
+
+package com.chitkara;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+
+		try (FileWriter fw = new FileWriter("a1.txt", true)) {
+
+			fw.write("Welcome to Chitakara\n");
+			fw.write(100);// d will be added
+			fw.write("\nramesh\nwelcome");
+			fw.write("\n");
+			fw.write("Odissa");
+			char ch[] = { 'a', 'b', 'c' };
+			fw.write(ch);
+			fw.write("\n");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+Note: If we use "try-with-resources" then Java automatically:
+
+1. flushes data
+2. closes stream
+
+
+--Because close() method internally calls the flush() method, so explicitly calling flush() method is not required.
+
+
+
+
+FileReader:
+==========
+
+--We can use the FileReader class to read the character oriented data from the file(Unicode).
+
+
+FileReader fr=new FileReader(String filename);
+
+FileReader fr=new FileReader(File f);
+
+
+
+Important methods of FileReader:
+--------------------------------
+
+
+1. int read(): It attempts to read the next charecter from the file and returns it in int value (unicode).
+
+--If the next charecter is not availalbe then it will return -1. i.e it returns -1 when it reached at the end of the file.
+
+
+Example:
+
+abc: then 97 98 99 -1
+
+
+2. int read(char ch[]): It attempts to read the enough charecter from the file into the char[] array and returns the number of charecter copied:
+
+
+Example:
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		File f = new File("abc.txt");
+
+		try (FileReader fr = new FileReader(f)) {
+
+			//int i = fr.read();
+
+			//while (i != -1) {
+			//	System.out.print((char) i);
+			//	i = fr.read();
+			//}
+
+			// recommended way
+
+			int i;
+
+			while ((i = fr.read()) != -1) {
+				System.out.println((char) i);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+}
+
+
+
+
+//OR using char[] 
+
+
+
+package com.chitkara;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		File f = new File("d:/myfolder/data.txt");
+
+		try (FileReader fr = new FileReader(f)) {
+
+			char[] chr = new char[(int) f.length()];
+
+			fr.read(chr);
+
+			String s = new String(chr);
+
+			System.out.println(s);
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+}
+
+
+
+Advantages of above char[] Approach:
+------------------------------------
+
+--Better performance
+--Faster than character-by-character reading
+--Fewer file access operations
+
+
+
+Limitation of the above char[] Approach:
+-----------------------------------------
+
+--This approach is not suitable for large files: File length may exceed the range of int data type.
+
+
+
+
+Note: The main limitation of the FileReader is we have to read charecter by charecter which is not convinent to the programer and it is not recomenrded with respect to performance also.
+
+
+--To overcome the problem of FileWriter and FileReader we should go for BufferedReader and BufferedWriter.
+
+
+
+BufferedWriter:
+===============
+
+
+--We can use BufferedWriter class to write charecter data to the file.
+
+
+Note: BufferedWriter class never communicate directly with the file. It communicate via some Writer object.
+
+syntax:
+
+	BufferedWriter bw=new BufferedWriter(Writer w);
+
+Example:
+
+	BufferedWriter bw=new BufferedWriter(new File("abc.txt")); //error
+
+	BufferedWriter bw=new BufferedWriter("abc.txt"); //error
+
+
+	BufferedWriter bw=new BufferedWriter(new FileWriter("abc.txt")); //ok
+
+
+Methods of the BufferedWriter class:
+------------------------------------
+
+
+
+write(int ch): To write a single character to the file.
+
+write(char ch[]): To write an array of charecter to the file.
+
+write(String s): To write a string to the file.
+
+flush(): To give the guarantee that last charecter of data also added to the file.
+
+close(): To close the current opened file..
+
+newLine(); To insert line seperator,it is independent to os.
+
+
+Example:
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) throws IOException {
+
+//		FileWriter fw = new FileWriter("abc.txt", true);
+//
+//		BufferedWriter bw = new BufferedWriter(fw);
+
+		BufferedWriter bw = new BufferedWriter(new FileWriter("abc.txt", true)); // chaining mechanism
+
+		bw.write(100);// d will be added
+		bw.newLine();
+		char ch[] = { 'a', 'b', 'c' };
+		bw.write(ch);
+		bw.newLine();
+		bw.write("ramesh\nwelcome");
+
+		bw.flush();
+		bw.close();
+	}
+}
+
+
+
+
+
+Better way : Using Try with resource: recommended way
+--------------------------------
+
+package com.chitkara;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("a2.txt"))) {
+
+			bw.write(100); // d
+
+			bw.newLine();
+
+			bw.write("Welcome to Chitkara...");
+
+			
+			System.out.println("done...");
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+Note: When we close the BufferedWriter, automatically FileWriter will be closed also.
+
+
+
+
+
+BufferedReader:
+==============
+
+--With the help of BufferedReader we can read the data from the file.
+
+--The main advantage of BufferedReader over the FileReader is we can read the data line by line instead of charecter by charecter.
+
+--Internally performance is better.
+
+--BufferedReader can't communicate directly with the file, It will communicate with file via some Reader object.
+
+
+Syntax:
+
+	BufferedReader br=new BufferedReader(Reader r);
+
+
+Example:
+
+	BufferedReader br=new BufferedReader(new FileReader("a2.txt"));
+
+
+
+Methods of the BufferedReader:
+------------------------------
+
+
+
+int read();
+
+int read(char ch[]);
+
+void close();
+
+String readLine();//it attempts to read the next line from the destination. If the next line is not available it returns null value.
+
+
+Example:
+
+
+Demo.java:
+----------
+
+
+
+package com.chitkara;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args)  {
+
+		try (BufferedReader br = new BufferedReader(new FileReader("abc.txt"))) {
+
+			String line = br.readLine();
+
+			while (line != null) {
+				System.out.println(line);
+				line = br.readLine();
+			}
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+}
+
+
+
+
+Note: we can avoid the redundent code br.readLine() using the following approach: (recommended way)
+
+
+String line;
+
+while((line = br.readLine()) != null){
+
+	System.out.println(line);
+}
+
+
+
+
+
+
+
+Note: Using the BufferedReader class we can also read the data from the keyboard.(User Input)
+
+Example:
+
+
+
+package com.chitkara;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+
+			System.out.println("Enter the Username: ");
+			String uname = br.readLine();
+
+			System.out.println("Enter Salary: ");
+			String sal = br.readLine();
+
+			// increamenting 1000 to the salary
+
+			double salary = Double.parseDouble(sal);
+
+			System.out.println("Username is: " + uname);
+			System.out.println("Salary after increment: " + (salary + 1000));
+
+		} catch (IOException e) {
+
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+}
+
+
+
+
+PrintWriter:
+===========
+
+
+--It is the most enhanced writer to write any type of data to the file.
+
+--By using FileWriter and BufferedWriter we can write only charecter data to the file, we can not write the primitive data to the file directly(like boolean, int, float etc.).
+
+--But with the help of PrintWriter we can write any type of primitive data to the file.
+
+-- It provides print() and println() methods also to write the primitive data also.
+
+
+Note: PrintWriter can communicate directly to the file and even via some writer object also.
+
+
+PrintWriter pw=new PrintWriter(String fname);
+
+PrintWriter pw=new PrintWriter(File f);
+
+PrintWriter pw=new PrintWriter(Writer w);
+
+
+Example:
+
+
+PrintWriter pw=new PrintWriter("a1.txt"); // OK
+
+PrintWriter pw=new PrintWriter(new File("a1.txt")); // OK
+
+
+--In the above both way we are not allow to use the append mode (true),So old data will be overwritten. 
+
+--To enable append mode:
+
+PrintWriter pw=new PrintWriter(new FileWriter("a1.txt", true)); // OK with append mode
+
+
+
+
+
+methods:
+
+
+1. All the methods of Writer class(Parent class methods).
+
+2. print(int i);
+
+3. print(double d);
+
+4. print(boolean b);
+
+5. print(String s);
+
+6. println(int i);
+
+7. println(String s);
+
+etc..
+
+
+
+Note: The difference between write(100) and print(100) is, write(100) will write corresponding charecter 'd' whereas print(100) will write the int value to the file.
+
+
+Note: The most enhanced reader is BufferedReader class and the most enhanced Writer is the PrintWriter class.
+
+
+Example:
+
+
+Demo.java:
+---------
+
+package com.chitkara;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (
+				// PrintWriter pw = new PrintWriter("a3.txt");
+				PrintWriter pw = new PrintWriter(new FileWriter("a3.txt", true));) {
+
+			pw.write(100);// d will be added
+			pw.println(100);
+			pw.println("Welcome to Chitkara");
+			pw.println(true);
+			pw.println('a');
+			pw.println(50.55);
+
+			
+			System.out.println("done");
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+}
+
+
+
+
+
+
+Note: As we can use Reader and Writer to handle charecter data(any primitive data or String data),we can use InputStream and OutputStream to handle binary data like images,audio,video,a class Object state, etc.
+
+
+
+Byte-Oriented Class:
+===================
+
+
+--Byte-Oriented Streams are used to read and write data in the form of bytes (8-bit).
+
+--A byte stream handles raw binary data directly.
+
+--Byte Stream = Data flow in raw binary form (0s and 1s)
+
+--Byte streams are useful when every single byte matters.
+
+
+Real-Life Analogy
+-----------------
+
+Think of Byte Stream like electricity:
+
+You don’t see meaning
+It is raw signal
+Machine understands it
+
+Similarly:
+
+Image 
+Video 
+Audio 
+Object
+
+--These are NOT readable text, they are binary.
+
+--It basically handle "raw" data where every single bit matters, like images and executable files.
+
+
+
+
+FileInputStream Class:
+----------------------
+
+FileInputStream is used to read data from a file in byte form.
+
+It is commonly used for:
+
+Images
+Videos
+Audio files
+Binary files
+
+
+Reading data from a file using a byte oriented class:
+-----------------------------------------------------
+
+
+Note: read() method returns -1 when no more data is available which represents End of File (EOF) . 
+
+
+
+Example:
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileInputStream fis = new FileInputStream("abc.txt")) {
+
+			int i = 0;
+
+			while ((i = fis.read()) != -1) {
+				System.out.print((char) i);
+			}
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+
+		}
+
+	}
+}
+
+
+--The above example will works for normal english text(ASCII) but it will fails for Unicode. 
+
+--So the FileInputStream is basically used to read the byte oriented files like images, audios, videos.where as FileReader and BufferedRead is used for reading the character oriented files like a text files, which can handles the Unicode internally.
+
+
+
+
+
+FileOutputStream Class:
+-----------------------
+
+--FileOutputStream is used to write byte data into a file.
+
+
+
+
+Writring data to a file using byte-oriented class:
+--------------------------------------------------
+
+
+Example:
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileOutputStream fos = new FileOutputStream("abc.txt")) {
+
+			fos.write(65); // A
+			fos.write(66); // B
+			
+			System.out.println("done");
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+
+
+	}
+}
+
+
+Note: Inside the FileOutputStream class, we don't have the support of following methods:
+
+write(String) 
+
+newLine()
+
+--because it works with raw bytes only.
+
+
+
+BufferedInputStream Class:
+--------------------------
+
+
+--BufferedInputStream improves the performance of reading operations.
+
+--It internally uses a memory buffer.
+
+--Instead of reading one byte at a time from the file, it reads a large block of bytes at once into memory.
+
+--This reduces the number of direct file access operations.
+
+
+Real-Life Analogy of BufferedInputStream:
+=========================================
+
+--Imagine you need water from a water tank.
+
+Without Buffer
+
+--You go to the tank every time you need one glass of water.
+
+--Very slow.
+
+With Buffer
+
+--You fill a bucket once and use water from the bucket repeatedly.
+
+--Much faster.
+
+
+Example:
+--------
+
+package com.chitkara;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("abc.txt"))) {
+
+            int i;
+
+            while ((i = bis.read()) != -1) {
+                System.out.print((char) i);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Advantages of BufferedInputStream
+==================================
+
+--Faster reading
+--Reduces disk access
+--Improves performance
+--Efficient for large files
+
+
+
+
+
+
+
+BufferedOutputStream Class:
+----------------------------
+
+--BufferedOutputStream improves writing performance using buffering.
+
+--Instead of writing every byte directly to the file, data is first stored inside a buffer memory.
+
+--When the buffer becomes full (or flush is called), data is written to the file together.
+
+
+Example:
+
+
+package com.chitkara;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("abc.txt"))) {
+
+            String data = "Hello Java";
+
+            bos.write(data.getBytes());
+
+           
+            System.out.println("Done");
+
+        } catch (IOException e) {
+           System.out.println(e.getMessage());
+
+        }
+    }
+}
+
+
+Advantages of BufferedOutputStream:
+-----------------------------------
+
+--Faster writing
+--Reduces file access operations
+--Improves efficiency
+--Best for large data writing
+
+
+
+
+
+PrintStream class:
+==================
+
+
+--This class provides the methods to write data to another stream(channing stream).
+
+--Using this class we can write the primitives also in the form of bytes.
+
+
+Recall:
+
+System.out.println();
+
+
+--Here "out" is the object of PrintStream class which is defined inside the System class in static way.
+
+--Which is responsible to write the byte oriented data to the console.
+
+
+
+
+Example:
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (PrintStream ps = new PrintStream(new FileOutputStream("abc.txt"))) {
+
+			ps.println("Hello Java");
+			ps.println(100);
+			ps.println(true);
+
+			System.out.println("done");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+}
+
+
+
+
+Main difference between PrintWriter and PrintStream class:
+---------------------------------------------------------
+
+
+| PrintStream                  | PrintWriter            |
+| ---------------------------- | ---------------------- |
+| Byte-Oriented                | Character-Oriented     |
+| Best for byte output         | Best for text output   |
+| Older approach               | Modern approach        |
+| Less Unicode support         | Better Unicode support |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Example: to copy a imgage:
+-------------------------
+
+Demo.java:
+----------
+
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+public class Demo {
+
+	public static void main(String[] args) throws Exception {
+
+		FileInputStream fis = new FileInputStream("img.jpg");
+		FileOutputStream fos = new FileOutputStream("img2.jpg");
+
+		int i;
+		while ((i = fis.read()) != -1) {
+			fos.write(i);
+		}
+
+		fis.close();
+		fos.close();
+
+		System.out.println("Success...");
+	}
+}
+
+
+
+
+
+More Optamized using Buffered Streams:
+---------------------------------------
+
+
+package com.chitkara;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+        try (
+
+	    BufferedInputStream bis =new BufferedInputStream(new FileInputStream("img.jpg"));
+
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("img2.jpg"))
+        ) {
+
+            int data;
+
+            while ((data = bis.read()) != -1) {
+
+                bos.write(data);
+            }
+
+        
+            System.out.println("File copied successfully!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+--Here BufferedInputStream internally maintains an internal buffer of 8KB.
+
+
+
+
+
+Student Task:
+=============
+
+Q/- Write a program to merge two text files into one file.
+
+
+Solution:
+=========
+
+
+a1.txt:
+
+this is the first line
+this is the second line
+
+a2.txt:
+
+this is the third line
+this is the fourt line
+
+
+merge.txt
+
+this is the first line
+this is the second line
+this is the third line
+this is the fourt line
+
+
+
+
+MergeFiles.java:
+-----------------
+
+
+package com.chitkara;
+
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class MergeFiles {
+
+	public static void main(String[] args) {
+
+		try (
+				BufferedReader br1 = new BufferedReader(new FileReader("file1.txt"));
+				BufferedReader br2 = new BufferedReader(new FileReader("file2.txt"));
+				PrintWriter pw = new PrintWriter("merged.txt")
+			) {
+
+			String line;
+
+			// Read first file
+			while ((line = br1.readLine()) != null) {
+				pw.println(line);
+			}
+
+			// Read second file
+			while ((line = br2.readLine()) != null) {
+				pw.println(line);
+			}
+
+			System.out.println("Files merged successfully!");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+Q/- Write a program to:
+
+--read file line by line
+--display longest line.
+
+
+
+Solution:
+=========
+
+LongestLineDemo.java:
+----------------------
+
+
+package com.chitkara;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class LongestLineDemo {
+
+	public static void main(String[] args) {
+
+		String longestLine = "";
+
+		try (BufferedReader br = new BufferedReader(new FileReader("abc.txt"))) {
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+
+				if (line.length() > longestLine.length()) {
+					longestLine = line;
+				}
+			}
+
+			System.out.println("Longest Line:");
+			System.out.println(longestLine);
+
+			System.out.println("Length: " + longestLine.length());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+Q/- Write a program to replace all occurrences of:
+
+Java : JAVA
+
+inside a file.
+
+
+
+Solution:
+=========
+
+
+ReplaceWordDemo.java:
+---------------------
+
+
+
+package com.chitkara;
+
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class ReplaceWordDemo {
+
+	public static void main(String[] args) {
+
+		StringBuilder data = new StringBuilder();
+
+		try (BufferedReader br = new BufferedReader(new FileReader("file1.txt"))) {
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+
+				line = line.replace("Java", "JAVA");
+
+				data.append(line);
+				data.append("\n");
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Write updated data back to file
+		try (PrintWriter pw = new PrintWriter("file1.txt")) {
+
+			pw.print(data.toString());
+
+			System.out.println("Replacement completed!");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Serialization:
+==============
+
+--Serialization is the process of converting an object (in RAM) into a byte stream so that it can be:
+
+--Stored in a file.
+--Sent over a network
+
+--Object (RAM): -> Byte Stream:->  File / Network
+
+
+--Using Serialization, we can transfer the state of an object from the RAM to the storage device or over a network.
+
+
+Real-Life Analogy:
+-----------------
+
+--Think of it like packing luggage:
+
+Object = Clothes
+Serialization = Packing
+File = Suitcase
+
+--You convert object into a form that can be transported.
+
+
+Serialization is Used when:
+---------------------------
+
+--Saving object data to file (backup)
+
+--Sending data over network (client-server)
+
+--Caching objects
+
+
+
+
+Deserialization:
+----------------
+
+--Deserialization is the reverse process:
+
+--From the Byte Stream to the Object (RAM)
+
+
+Analogy:
+
+--Like unpacking luggage.
+
+File: Open suitcase
+Data: Restore original object.
+
+
+
+
+Note: We can't convert object of all classes to the byte stream to transfer it to another location outside the RAM.
+
+
+--There is an interface by name Serializable belongs to java.io package:
+
+
+	java.io.Serializable
+
+--This interface is a marker or tag interface, which does not have any methods.
+
+
+--Object of classes which implements the Serializable interface only are eligible for serialization. (Only they have the permission to be serialized).
+
+
+--If we try to serialize a non-serializable object, we will get a runtime exception called NotSerializableException.
+
+
+--The java.io.ObjectOutputStream class helps us in transfering the object of classes from our program(RAM) to the other location(network or harddisk): (Serialization)
+
+--Similarly,the java.io.ObjectInputStream class helps us in transferring the object of classes from other location(network or harddisk) to our program(RAM)..(Deserialization)
+
+
+--The object of ObjectOutputStream and ObjectInputStream class holds the address of source or destinations.
+
+--We can serialize mutiple objects but in which order we serialized the objects, in the same order only we have to deserialized those objects.
+
+
+
+---ObjectOutputStream class has a method by name:
+
+ void writeObject(Object o);
+
+--It takes the object of a class which implements the Serializable interface.
+
+
+
+**Note: String class, all Wrapper classes, arrays, and most of the Collection framework classes implement the Serializable interface in Java.
+
+
+
+
+Example:
+
+
+A.java:
+-------
+
+
+package com.chitkara;
+import java.io.Serializable;
+public class A implements Serializable
+{
+
+int i=10;
+
+public void funA(){
+
+	System.out.println("inside funA() of A class");
+	System.out.println(i);
+	
+	}
+}
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class Demo {
+
+	public static void main(String[] args) throws IOException {
+
+		A a1 = new A();
+
+		a1.i = 22; // changing the state
+
+		//FileOutputStream fos = new FileOutputStream("abc.txt");
+		//ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("abc.txt"));
+
+		oos.writeObject(a1);
+
+		a1.i = 50;// After serialize the object if we change the value of a1.i ,it will be
+					// reflected only inside the RAM but not in the harddisk in which we have
+					// serialized the object of A class.
+
+		oos.writeObject("Chitkara");// String class object
+		oos.writeObject(10);// Integer object; Autoboxing.
+
+		oos.close();
+
+		System.out.println("Serialized..");
+
+	}
+}
+
+
+
+In better and recommended way:
+------------------------------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		A a1 = new A();
+
+		a1.i = 22;
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("abc.txt"))) {
+
+			oos.writeObject(a1);
+
+			a1.i = 50;
+			
+			oos.writeObject("Chitkara");
+			oos.writeObject(10);
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Serialized..");
+
+	}
+}
+
+
+
+
+
+**Note: If the above class A has not implemented the Serializable interface then the above program will throw a runtime exception.
+
+--Serialization saves object state (data), not behavior (methods).
+
+
+
+
+Deserialization:
+================
+
+
+--With the help of ObjectInputStream class, we can read back the object into the RAM, which we have serialized. This process is known as De-serialization.
+
+
+Inside the ObjectInputStream class we have a method called:
+
+
+Object readObject();
+
+--Using this method we can deserailize the object in the form of object of Object class.
+
+--To get back the actual objects we need to downcast the object of Object class into object of original class.
+
+--For this we need to know the order(sequence) in which object were serialized, we need to deserialize the objects in the same order in which they are serialized.
+
+
+Note: Here generics concept is not applicable.
+
+
+**Note: While deserialization the constructor of the class will not be executed.
+
+--During deserialization JVM does not create the object using constructor. Instead JVM internally recreates the object directly from byte stream data.
+
+
+
+Example:
+
+
+ReadDemo.java:
+-------------
+
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+public class ReadDemo {
+
+	public static void main(String[] args) {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("abc.txt"))) {
+
+			Object obj = ois.readObject();
+
+			A a1 = (A) obj;
+
+			a1.funA();
+
+			String message = (String) ois.readObject();
+
+			System.out.println(message);
+
+			int x = (Integer) ois.readObject();
+
+			System.out.println(x);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Note:  Even though we can serialize different types of object using the writeObject() method, but we should write homogenious type of object only, because are the time of deserialization we should know the sequence of serailized object which may cause the ClassCastException.
+ 
+
+Student Task:
+------------
+
+--Create a Student bean class and write (serialize) 5 students object inside a file called : studentsdata.txt file. (Use the SerializeDemo class)
+
+--Deserialize all the student objects from the file studentsdata.txt and print their details. (Use the DeserializeDemo.java)
+
+
+
+Solution:
+---------
+
+
+Student.java:
+-------------
+
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class Student implements Serializable {
+	
+	
+	private int roll;
+	private String name;
+	private double marks;
+	
+	//zero argument constructor
+	//Parameterized constructor
+	//getters and setters
+	//toString() method	
+
+}
+
+
+
+SerializeDemo.java:
+------------------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SerilizeDemo {
+
+	public static void main(String[] args) {
+
+		Student s1 = new Student(10, "N1", 780);
+		Student s2 = new Student(12, "N2", 720);
+		Student s3 = new Student(14, "N3", 480);
+		Student s4 = new Student(16, "N4", 500);
+		Student s5 = new Student(18, "N5", 590);
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("studentsdata.txt"))) {
+
+			oos.writeObject(s1);
+			oos.writeObject(s2);
+			oos.writeObject(s3);
+			oos.writeObject(s4);
+			oos.writeObject(s5);
+
+			System.out.println("serialized...");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+DeserializeDemo.java:
+---------------------
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DeserializeDemo {
+
+	public static void main(String[] args) {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("studentsdata.txt"))) {
+
+			for (int i = 1; i <= 5; i++) {
+
+				Student s = (Student) ois.readObject();
+
+				System.out.println("Roll is :" + s.getRoll());
+				System.out.println("Name is :" + s.getName());
+				System.out.println("Marks is :" + s.getMarks());
+
+				System.out.println("=============================");
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+Note: The main limitation of the above program is we wrote(serialize) and read (deserialize) all the 5 Student class object one by one, which is not convineient with respect to the performance, (access the file for each object).
+
+--To improve the performance we can make use of Collection classes, group the multiple objects and write that Collection class object with a single writeObject() method.
+
+
+Example:
+
+
+SerilizeDemo.java:
+-------------------
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SerilizeDemo {
+
+	public static void main(String[] args) {
+
+		List<Student> students = new ArrayList<>();
+
+		students.add(new Student(10, "N1", 780));
+		students.add(new Student(11, "N2", 680));
+		students.add(new Student(12, "N3", 480));
+		students.add(new Student(13, "N4", 720));
+		students.add(new Student(14, "N5", 750));
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("studentsdata.txt"))) {
+
+			oos.writeObject(students);
+
+			System.out.println("serialized...");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+DeserializeDemo.java:
+---------------------
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DeserializeDemo {
+
+	public static void main(String[] args) {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("studentsdata.txt"))) {
+
+			List<Student> students = (ArrayList<Student>) ois.readObject();
+
+			for (Student s : students) {
+
+				System.out.println("Roll is :" + s.getRoll());
+				System.out.println("Name is :" + s.getName());
+				System.out.println("Marks is :" + s.getMarks());
+
+				System.out.println("=============================");
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+serialVersionUID:
+-----------------
+
+--It is a unique version ID used inside the class, during serialization and deserialization.
+
+Example:
+
+
+private static final long serialVersionUID = 1L;
+
+
+
+Meaning: 
+
+serialVersionUID = Version number of a class
+
+
+When an object is serialized, Java stores:
+
+--Object data (state) 
+--Class version (serialVersionUID)
+
+
+During deserialization:
+
+--JVM checks if class version matches If Not Matching it generates a InvalidClassException.
+
+
+Real-Life Analogy:
+
+Think of it like a document version:
+
+--File saved with version 1
+--Trying to open with version 2
+
+--If versions mismatch :  Error
+
+
+
+Q/- What if we don’t define it?
+
+A/- JVM generates it automatically
+
+Problem:
+
+--Even small code changes a new ID is generated.
+--Old serialized data becomes invalid
+
+
+Best Practice:
+
+--Always define manually:
+
+Example:
+
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
+}
+
+
+
+Change it when:
+
+--Class structure changes (fields added/removed)
+--You want to invalidate old serialized data.
+
+
+
+
+Important Points of serialVersionUID:
+-------------------------------------
+
+--Must be static final long
+--Used only during serialization
+--Helps in version control
+--Prevents unexpected exceptions
+
+
+
+
+Example:
+
+
+A.java:
+-------
+
+
+package com.chitkara;
+import java.io.Serializable;
+public class A implements Serializable
+{
+
+private static final long serialVersionUID = 1L;
+
+int i=10;
+
+public void funA(){
+
+	System.out.println("inside funA() of A class");
+	System.out.println(i);
+	
+	}
+}
+
+
+
+Now lets serialize the A class object.
+
+
+A a1= new A();
+
+ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("abc.ser"));
+
+oos.writeObject(a1);
+
+
+Now change the class A: 
+
+--adding another filed.
+
+
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class A implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
+	int i = 10;
+	int j= 20;
+
+	public void funA() {
+
+		System.out.println("inside funA() of A class");
+		System.out.println(i);
+		System.out.println(j);
+		
+	}
+}
+
+
+--If we now deserialize the object then we get the j=0 (default value).
+
+--But after modification inside the class A if we change the serialVersionUID = 2L; then it will raise java.io.InvalidClassException
+
+
+
+
+
+transient Keyword in Java:
+-------------------------
+
+
+--transient is a keyword used with instance variables to indicate that:
+
+-This variable related value should NOT be saved during serialization.
+
+transient = "Do not serialize this variable"
+
+
+Syntax:
+
+ transient int j = 20;
+
+
+--At the time of serialization: JVM ignores original value of j.
+
+--transient variables are NOT serialized. They get default values after deserialization.
+
+
+
+Real-Life Analogy:
+-----------------
+
+Think of filling a form:
+
+Name: saved 
+Address: saved
+Password: NOT saved 
+
+--Here Password should be the transient field.
+
+
+Common reasons:
+
+--Security (passwords, OTPs)
+--Temporary data (cache, session info)
+--Derived/calculated values
+
+
+
+
+transient vs static:
+--------------------
+
+--The static variables are not part of objects, they are the part of class, hence they will also not participate in serialization. 
+--static value will be reloaded at the time of class loading time.
+
+
+Example:
+
+
+A.java:
+-------
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class A implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	int i = 10;
+	static int j = 20;
+	transient String password = "12345";
+
+	void funA() {
+		System.out.println("inside funA()");
+		System.out.println("The value of non-static i: " + i);
+		System.out.println("The value of static j: " + j);
+		System.out.println("The value of transient password: " + password);
+	}
+}
+
+
+
+WriteDemo.java: (Serialization)
+--------------
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class WriteDemo {
+
+	public static void main(String[] args) {
+
+		A a1 = new A();
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("abc.ser"))) {
+
+			oos.writeObject(a1);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Serialized..");
+
+	}
+}
+
+
+
+ReadDemo.java: (Deserialization)
+--------------
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+public class ReadDemo {
+
+	public static void main(String[] args) {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("abc.ser"))) {
+
+			A a1= (A)ois.readObject();
+
+			a1.funA();
+
+
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+Output:
+
+inside funA()
+The value of non-static i: 10
+The value of static j: 20
+The value of transient password: null
+
+
+
+Important Notes:
+----------------
+
+1. static + transient:
+
+
+static transient int x;
+
+--No effect
+--Because static is already not serialized.
+
+
+
+2. final + transient
+
+
+final transient int x = 10; // final variable must be initialized before the object creation
+
+--No effect
+
+--final transient fields are not serialized, but their value may still appear after deserialization because they are initialized when the object is created.
+
+--Constructor / field initialization runs
+--Value assigned again
+
+
+
+Object Graph:
+============
+
+--Object Graph = Set of all objects reachable from the main object being serialized.
+
+--When we serialize an object, all objects connected to it are also serialized automatically, In other words: If an object contains references to other objects, those objects are also will be serialized.
+
+
+Rule: All objects in the object graph MUST be Serializable, if any class inside that graph not implements the Serializable interface then it generates a NotSerializableException.
+
+
+Example:
+
+import java.io.Serializable;
+
+class Dog implements Serializable {
+    Cat c = new Cat();
+}
+
+class Cat implements Serializable {
+    Rat r = new Rat();
+}
+
+class Rat implements Serializable {
+}
+
+
+
+Demo.java:
+----------
+
+
+   	Dog d = new Dog();
+
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("file1.ser"));
+
+        oos.writeObject(d);
+
+        oos.close();
+
+        System.out.println("Serialized successfully");
+
+
+
+
+--Here, entire graph is saved (not just one object)
+
+
+Note: Assume Rat is not implemented the Serializable interface then it will raise NotSerializableException, To avoid this exception we have 2 options:
+
+1. Implement the Serializable interface to the Rat class also.
+
+2. Make the Rat field as transient. so that it will not participate in serialization.
+
+Example:
+
+class Cat implements Serializable {
+   transient Rat r = new Rat();
+}
+
+
+
+
+Serialization with respect to Inheritance:
+------------------------------------------
+
+--Serialization and inheritance are closely related in Java.
+
+--The behavior depends on whether the parent class is serializable or not.
+
+Case 1: Parent Class Implements Serializable
+
+--If the parent class implements Serializable, then automatically every child class also becomes serializable, even if the child class does not explicitly implement Serializable.
+
+--This is because the Serializable nature is inherited from parent to child.
+
+
+
+
+Real-Life Analogy:
+-----------------
+
+
+--Suppose a father has a VIP pass that allows entry into a stadium.
+
+If the rule says:
+
+"Children of VIP members are also allowed"
+
+--then the child automatically gets access even if the child does not have a separate VIP pass.
+
+Similarly:
+
+Parent class:  Serializable
+Child class: Automatically Serializable
+
+
+Example:
+
+
+Animal.java: Parent class
+------------
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class Animal implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	int age = 2;
+}
+
+
+
+Dog.java: child class
+---------
+
+package com.chitkara;
+
+public class Dog extends Animal {
+
+	String name = "tommy";
+
+}
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data.ser"))) {
+
+			Dog d = new Dog();
+
+			oos.writeObject(d);
+
+			System.out.println("Serialized..");
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+
+
+
+Case 2: Parent Class is NOT Serializable
+
+--Even if the parent class does NOT implement Serializable,
+--We can still serialize the child object if the child class implements Serializable.
+
+
+Example:
+-------
+
+
+
+Animal.java: Parent class: Non-serializable
+------------
+
+package com.chitkara;
+public class Animal {
+
+
+	int age = 2;
+}
+
+
+
+Dog.java: child class
+---------
+
+package com.chitkara;
+import java.io.Serializable;
+
+public class Dog extends Animal implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	String name = "tommy";
+
+}
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data.ser"))) {
+
+			Dog d = new Dog();
+
+			//changing the state
+
+			d.age = 4;
+			d.name= "Rocky";
+
+			oos.writeObject(d);
+
+			System.out.println("Serialized..");
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+
+Deserailizaing the Dog object:
+------------------------------
+
+DeserializeDemo.java:
+--------------------
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+public class DeserializeDemo {
+
+	public static void main(String[] args) {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data.ser"))) {
+
+		
+			 Dog d= (Dog)ois.readObject();
+		
+			System.out.println(d.age); // 2
+        		System.out.println(d.name); // Rocky
+
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+Explanation:
+------------
+
+During Serialization:
+
+--The JVM serializes only the child class data (Dog class data).
+
+--The parent class (Animal) data is ignored because Animal is non-serializable. 
+
+--Only the default data stored for the parent. The updated data for the Animal class is not saved.
+
+
+At the time of deserialization:
+
+--JVM first checks parent classes.
+
+--If a parent class is non-serializable,
+
+--JVM creates a separate object of that parent class.
+
+--JVM calls the zero-argument constructor of the non-serializable parent.
+
+--Parent instance variables get initialized using constructor/default values.
+
+--Serialized child data is restored.
+
+--During deserialization, JVM recreated the Animal object using its constructor.
+
+So original value comes again:
+
+int age = 2;
+
+
+
+Important Rule:
+----------------
+
+--Every non-serializable parent class must compulsorily contain a zero-argument constructor.
+
+--Otherwise JVM cannot recreate the parent object during deserialization.
+
+--If zero-argument constructor is absent inside the Parent class, then we get: java.io.InvalidClassException
+
+
+
+
+
+
+Student Task:
+==============
+
+Mini Student Management System using Serialization:
+
+
+Student.java:
+-------------
+
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class Student implements Serializable {
+	
+	
+	private int roll;
+	private String name;
+	private double marks;
+	
+	//zero argument constructor
+	//Parameterized constructor
+	//getters and setters
+	//toString() method	
+
+}
+
+
+
+
+--Menu Driven Program:
+
+1. Add New Student
+2. Get All Students
+3. Search Student by Roll
+4. Delete Student
+5. Update Student 
+6. Sort Students
+6. Exit
+
+
+--Use the "studentsdata.ser" file to store the objects.
+
+--Implement the above functionalities by using the following interface:
+
+
+
+StudentManagement.java: (inteface)
+-----------------------------------
+
+package com.chitkara;
+
+import java.util.List;
+
+public interface StudentManagement {
+
+	void addNewStudent(Student student);
+
+	List<Student> getAllStudents();
+
+	Student searchStudentByRoll(int roll);
+
+	boolean updateStudentMarks(int roll, double newMarks);
+
+	void sortStudents(String sortBy);
+
+	boolean deleteStudent(int roll);
+
+}
+
+
+
+
+Solution:
+---------
+
+
+Student.java:
+-------------
+
+
+package com.chitkara;
+
+import java.io.Serializable;
+
+public class Student implements Serializable {
+	
+	
+	private int roll;
+	private String name;
+	private double marks;
+	
+	//zero argument constructor
+	//Parameterized constructor
+	//getters and setters
+	//toString() method	
+
+}
+
+
+
+StudentManagementImpl.java:
+---------------------------
+
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+public class StudentManagementImpl implements StudentManagement {
+
+	private List<Student> studentList = new ArrayList<>();
+
+	private static final String FILE_NAME = "studentsdata.ser";
+
+	public StudentManagementImpl() {
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+
+			studentList = (ArrayList<Student>) ois.readObject();
+
+		} catch (Exception e) {
+
+			System.out.println("No existing student data found.");
+		}
+
+	}
+
+	@Override
+	public void addNewStudent(Student student) {
+
+		for (Student s : studentList) {
+
+			if (s.getRoll() == student.getRoll()) {
+
+				System.out.println("Duplicate Roll Number Not Allowed");
+				return;
+			}
+		}
+
+		studentList.add(student);
+
+		saveStudentsToFile();
+
+		System.out.println("Student Added Successfully");
+
+	}
+
+	@Override
+	public List<Student> getAllStudents() {
+
+		// return studentList;
+
+		return new ArrayList<>(studentList);
+	}
+
+	@Override
+	public Student searchStudentByRoll(int roll) {
+		for (Student s : studentList) {
+
+			if (s.getRoll() == roll) {
+
+				return s;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean updateStudentMarks(int roll, double newMarks) {
+		Student s = searchStudentByRoll(roll);
+
+		if (s != null) {
+
+			s.setMarks(newMarks);
+
+			saveStudentsToFile();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void sortStudents(String sortBy) {
+
+		if (sortBy.equalsIgnoreCase("marks")) {
+			Collections.sort(studentList, (s1, s2) -> Double.compare(s1.getMarks(), s2.getMarks()));
+		} else if (sortBy.equalsIgnoreCase("name")) {
+			Collections.sort(studentList, (s1, s2) -> s1.getName().compareTo(s2.getName()));
+		} else if (sortBy.equalsIgnoreCase("roll")) {
+			Collections.sort(studentList, (s1, s2) -> Integer.compare(s1.getRoll(), s2.getRoll()));
+		}
+
+		for (Student s : studentList) {
+
+			System.out.println(s);
+		}
+
+	}
+
+	private void saveStudentsToFile() {
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+
+			oos.writeObject(studentList);
+
+		} catch (IOException e) {
+
+			System.out.println("Error saving student data.");
+		}
+	}
+
+	@Override
+	public boolean deleteStudent(int roll) {
+
+		Iterator<Student> itr = studentList.iterator();
+
+		while (itr.hasNext()) {
+
+			Student s = itr.next();
+
+			if (s.getRoll() == roll) {
+
+				itr.remove();
+
+				saveStudentsToFile();
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+}
+
+
+
+
+
+MainDemo.java:
+--------------
+
+
+package com.chitkara;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class MainDemo {
+
+	private static Scanner sc = new Scanner(System.in);
+
+	private static StudentManagement sm = new StudentManagementImpl();
+
+	public static void main(String[] args) {
+
+		while (true) {
+
+			System.out.println("\n========== Student Management System ==========");
+
+			System.out.println("1. Add New Student");
+			System.out.println("2. Get All Students");
+			System.out.println("3. Search Student By Roll");
+			System.out.println("4. Update Student Marks");
+			System.out.println("5. Delete Student");
+			System.out.println("6. Sort Students");
+			System.out.println("7. Exit");
+
+			System.out.println("===============================================");
+
+			System.out.print("Enter Your Choice : ");
+
+			int choice = sc.nextInt();
+
+			switch (choice) {
+
+			case 1:
+				addStudent();
+				break;
+
+			case 2:
+				displayAllStudents();
+				break;
+
+			case 3:
+				searchStudent();
+				break;
+
+			case 4:
+				updateStudentMarks();
+				break;
+
+			case 5:
+				deleteStudent();
+				break;
+
+			case 6:
+				sortStudents();
+				break;
+
+			case 7:
+				System.out.println("Thank You...");
+				System.exit(0);
+
+			default:
+				System.out.println("Invalid Choice.");
+			}
+		}
+	}
+
+	// Add Student
+	private static void addStudent() {
+
+		System.out.print("Enter Roll : ");
+		int roll = sc.nextInt();
+
+		System.out.print("Enter Name : ");
+		String name = sc.next();
+
+		System.out.print("Enter Marks : ");
+		double marks = sc.nextDouble();
+
+		Student s = new Student(roll, name, marks);
+
+		sm.addNewStudent(s);
+	}
+
+	// Display All Students
+	private static void displayAllStudents() {
+
+		List<Student> students = sm.getAllStudents();
+
+		if (students.isEmpty()) {
+
+			System.out.println("No Students Found.");
+			return;
+		}
+
+		System.out.println("\n===== Student List =====");
+
+		for (Student s : students) {
+
+			System.out.println(s);
+		}
+	}
+
+	// Search Student
+	private static void searchStudent() {
+
+		System.out.print("Enter Roll Number : ");
+
+		int roll = sc.nextInt();
+
+		Student s = sm.searchStudentByRoll(roll);
+
+		if (s != null) {
+
+			System.out.println("Student Found:");
+			System.out.println(s);
+
+		} else {
+
+			System.out.println("Student Not Found.");
+		}
+	}
+
+	// Update Student Marks
+	private static void updateStudentMarks() {
+
+		System.out.print("Enter Roll Number : ");
+
+		int roll = sc.nextInt();
+
+		System.out.print("Enter New Marks : ");
+
+		double marks = sc.nextDouble();
+
+		boolean updated = sm.updateStudentMarks(roll, marks);
+
+		if (updated) {
+
+			System.out.println("Marks Updated Successfully.");
+
+		} else {
+
+			System.out.println("Student Not Found.");
+		}
+	}
+
+	// Delete Student
+	private static void deleteStudent() {
+
+		System.out.print("Enter Roll Number : ");
+
+		int roll = sc.nextInt();
+
+		boolean deleted = sm.deleteStudent(roll);
+
+		if (deleted) {
+
+			System.out.println("Student Deleted Successfully.");
+
+		} else {
+
+			System.out.println("Student Not Found.");
+		}
+	}
+
+	// Sort Students
+	private static void sortStudents() {
+
+		System.out.println("\nSort Students By:");
+
+		System.out.println("1. Roll");
+		System.out.println("2. Name");
+		System.out.println("3. Marks");
+
+		System.out.print("Enter Choice : ");
+
+		int choice = sc.nextInt();
+
+		switch (choice) {
+
+		case 1:
+
+			sm.sortStudents("roll");
+			break;
+
+		case 2:
+
+			sm.sortStudents("name");
+			break;
+
+		case 3:
+
+			sm.sortStudents("marks");
+			break;
+
+		default:
+
+			System.out.println("Invalid Choice.");
+			return;
+		}
+
+		System.out.println("Students Sorted Successfully.");
+
+		displayAllStudents();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+StreamTokenizer in Java:
+========================
+
+
+--StreamTokenizer is a class present in the java.io package.
+
+--It is used to reads the data from a stream and separates it into tokens automatically.
+
+These tokens can be:
+
+Words
+Numbers
+Symbols
+Special characters
+End of line
+End of file
+
+
+
+Real-Life Analogy: 
+-----------------
+
+--Suppose a teacher gives you the following sentence:
+
+	Java is easy 100 times
+
+--You naturally divide it into parts:
+
+Java
+is
+easy
+100
+times
+
+--Each separated part is called a token.
+
+--StreamTokenizer does the same work automatically.
+
+
+Q/- Why Do We Need StreamTokenizer?
+
+
+A/- Normally when reading data from a file:
+
+
+FileReader fr = new FileReader("abc.txt"); // reads character by character
+
+BufferedReader br = new BuffererdReader(new FileReader("data.text")); // reads line by line
+
+
+But sometimes we want:
+
+--words separately
+--numbers separately
+--symbols separately
+
+Doing this manually is difficult.
+
+StreamTokenizer simplifies this work.
+
+
+
+Constructor:
+------------
+
+StreamTokenizer st = new StreamTokenizer(Reader obj);
+
+
+Example1:
+
+FileReader fr = new FileReader("data.txt");
+StreamTokenizer st = new StreamTokenizer(fr);
+
+
+Example2:
+
+BufferedReader br = new BufferedReader(new FileReader(data.txt));
+StreamTokenizer st = new StreamTokenizer(br);
+
+
+Important Fields of StreamTokenizer class:
+-------------------------------------------
+
+int ttype; // Type f current token
+
+String sval; //Stores String token
+
+double nval; // Stores numeric tokens
+
+
+
+
+
+
+Important Constants of StreamTokenizer class:
+---------------------------------------------
+
+public static final int TT_EOF; // Current token is End of File
+public static final int TT_EOL; // Current token is End of line
+public static final int TT_NUMBER; //Current token is a number
+public static final int TT_WORD; //Current token is a word 
+
+
+
+
+Important Method:
+-----------------
+
+int nextToken()
+
+--This method reads the next token from the stream.
+
+
+
+
+Example:
+
+File Content (data.txt)
+-----------------------
+
+Java 100 Python 200
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("data.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				if (st.ttype == StreamTokenizer.TT_WORD) {
+					System.out.println("Word :" + st.sval);
+				}
+
+				else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+					System.out.println("Number :" + st.nval);
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+Output:
+
+Word : Java
+Number : 100.0
+Word : Python
+Number : 200.0
+
+
+
+Example With Symbol:
+--------------------
+
+
+File Content (data.txt)
+-----------------------
+
+A + B = 100
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("data.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				if (st.ttype == StreamTokenizer.TT_WORD) {
+					System.out.println("Word :" + st.sval);
+				}
+
+				else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+					System.out.println("Number :" + st.nval);
+				}
+				else {
+					System.out.println("Symbol: "+ (char)st.ttype);
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+
+Output:
+
+WORD : A
+SYMBOL : +
+WORD : B
+SYMBOL : =
+NUMBER : 100.0
+
+
+Default Behavior of StreamTokenizer:
+------------------------------------
+
+
+| Data Type | Behavior           |
+| --------- | ------------------ |
+| Alphabets | Treated as words   |
+| Numbers   | Treated as numbers |
+| Spaces    | Ignored            |
+| Newline   | Ignored            |
+| Symbols   | Returned directly  |
+
+
+
+Example: Reading Line by Line
+
+
+--By default newline is ignored.
+
+--To detect line endings:
+
+	st.eolIsSignificant(true);
+
+
+File Content (data.txt)
+-----------------------
+A + B = 100
+X + Y = 200
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("data.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			st.eolIsSignificant(true);
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				if (st.ttype == StreamTokenizer.TT_EOL) {
+					System.out.println("End of Line");
+				} else if (st.ttype == StreamTokenizer.TT_WORD) {
+					System.out.println(st.sval);
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+Output:
+
+A
+B
+End of Line
+X
+Y
+
+
+Note: Without st.eolIsSignificant(true);
+
+The output:
+
+A
+B
+X
+Y
+
+
+
+Advantages of StreamTokenizer:
+------------------------------
+
+--Easy token separation
+
+--Separates words and numbers automatically
+
+--Useful for parsing text files
+
+--Customizable behavior
+
+
+
+Limitations:
+------------
+
+--Old class
+
+--Less powerful compared to modern parsers
+
+--Rarely used in modern applications
+
+-- Mostly used for learning/basic parsing
+
+
+
+
+Modern Alternatives:
+-------------------
+
+--Scanner
+--BufferedReader
+--Regular Expressions (Pattern, Matcher)
+--JSON/XML parsers
+--Third-party parsing libraries
+
+
+
+Student Task:
+-------------
+
+--Calculating Total Amount of a cart using StreamTokenizer
+
+File Content (cart.txt)
+-----------------------
+
+pen 10
+pencil 20
+eraser 30
+ink 50
+
+Here:
+
+pen, pencil, eraser, ink:  product names
+10, 20, 30, 50: prices
+
+--We want to calculate the total amount.
+
+
+Solution:
+----------
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("cart.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			double total = 0;
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				if (st.ttype == StreamTokenizer.TT_NUMBER) {
+					total = total + st.nval;
+				}
+			}
+
+			System.out.println("Total Amount : " + total);
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+Better Version: Display Each Item and Total
+--------------
+
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("cart.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			double total = 0;
+			String item = "";
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				// If token is word
+				if (st.ttype == StreamTokenizer.TT_WORD) {
+
+					item = st.sval;
+				}
+
+				// If token is number
+				else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+
+					double price = st.nval;
+
+					total = total + price;
+
+					System.out.println(item + " = " + price);
+				}
+			}
+
+			System.out.println("----------------");
+			System.out.println("Total = " + total);
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+}
+
+
+
+Task2: Create the ArrayList object of Student class by using the following details given inside a file:
+
+
+File Content (studentsdata.txt)
+-------------------------------
+
+101 Raj 850
+102 Aman 900
+103 Rohit 760
+
+
+
+Here:
+
+101 : Roll Number
+Raj : Name
+850 : Marks
+
+We want to:
+
+--Read data from file
+
+--Create Student objects
+
+--Store them inside ArrayList
+
+
+
+Solution:
+---------
+
+Student.java: bean class
+------------
+
+
+private int roll;
+private String name;
+private double marks;
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		List<Student> students = new ArrayList<>();
+
+		try (FileReader fr = new FileReader("studentsdata.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				// Read Roll Number
+				int rollno = (int) st.nval;
+
+				// Read Name
+				st.nextToken();
+				String name = st.sval;
+
+				// Read Marks
+				st.nextToken();
+				int marks = (int) st.nval;
+
+				// Create Student Object
+				Student student = new Student(rollno, name, marks);
+
+				// Add object into ArrayList
+				students.add(student);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		// Display the Students record:
+
+		for (Student s : students) {
+			System.out.println("Roll: " + s.getRoll());
+			System.out.println("Name: " + s.getName());
+			System.out.println("Marks: " + s.getMarks());
+			System.out.println("-------------------------");
+		}
+
+	}
+}
+
+
+
+Task3: Suppose a teacher has a file "data.txt" containing:
+
+Rohit 850 Aman 900 Karan 760 Dinesh 100
+
+
+Count the:
+
+Total words
+Total numbers
+
+using StreamTokenizer.
+
+
+
+Solution:
+---------
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileReader fr = new FileReader("data.txt")) {
+
+			StreamTokenizer st = new StreamTokenizer(fr);
+
+			int wordCount = 0;
+			int numberCount = 0;
+
+			while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+				if (st.ttype == StreamTokenizer.TT_WORD) {
+
+					wordCount++;
+				}
+
+				else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+
+					numberCount++;
+				}
+
+			}
+
+			System.out.println("Total Words : " + wordCount);
+			System.out.println("Total Numbers : " + numberCount);
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
+
+
+
+
+
+
+ 
+
+
+
+
+
+
