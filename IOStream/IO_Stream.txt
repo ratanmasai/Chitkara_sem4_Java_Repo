@@ -1949,7 +1949,7 @@ public class ReadDemo {
 
 
 
-Note:  Even though we can serialize different types of object using the writeObject() method, but we should write homogenious type of object only, because are the time of deserialization we should know the sequence of serailized object which may cause the ClassCastException.
+Note:  Even though we can serialize different types of object using the writeObject() method, but we should write homogenious type of object only, because at the time of deserialization we should know the sequence of serailized object which may cause the ClassCastException.
  
 
 Student Task:
@@ -2073,7 +2073,7 @@ public class DeserializeDemo {
 
 Note: The main limitation of the above program is we wrote(serialize) and read (deserialize) all the 5 Student class object one by one, which is not convineient with respect to the performance, (access the file for each object).
 
---To improve the performance we can make use of Collection classes, group the multiple objects and write that Collection class object with a single writeObject() method.
+--To improve the performance we can make use of Collection framework related classes, group the multiple objects and write that Collection class object with a single writeObject() method.
 
 
 Example:
@@ -2320,7 +2320,7 @@ transient Keyword in Java:
 
 -This variable related value should NOT be saved during serialization.
 
-transient = "Do not serialize this variable"
+transient = "Do not serialize this variable" (Ignore this variable related value during serialization)
 
 
 Syntax:
@@ -2360,6 +2360,11 @@ transient vs static:
 
 --The static variables are not part of objects, they are the part of class, hence they will also not participate in serialization. 
 --static value will be reloaded at the time of class loading time.
+
+--So even we make a static variable as transient also, there will be no any effect.
+
+
+
 
 
 Example:
@@ -2475,13 +2480,12 @@ static transient int x;
 2. final + transient
 
 
-final transient int x = 10; // final variable must be initialized before the object creation
+transient final int x = 10; // final variable must be initialized before the object creation
 
 --No effect
 
 --final transient fields are not serialized, but their value may still appear after deserialization because they are initialized when the object is created.
 
---Constructor / field initialization runs
 --Value assigned again
 
 
@@ -2549,6 +2553,14 @@ class Cat implements Serializable {
 
 
 
+
+
+
+
+
+
+
+
 Serialization with respect to Inheritance:
 ------------------------------------------
 
@@ -2561,6 +2573,16 @@ Case 1: Parent Class Implements Serializable
 --If the parent class implements Serializable, then automatically every child class also becomes serializable, even if the child class does not explicitly implement Serializable.
 
 --This is because the Serializable nature is inherited from parent to child.
+
+
+
+class Animal implements Serializable
+
+class Dog extends Animal 
+
+
+
+
 
 
 
@@ -2841,7 +2863,7 @@ public class Student implements Serializable {
 4. Delete Student
 5. Update Student 
 6. Sort Students
-6. Exit
+7. Exit
 
 
 --Use the "studentsdata.ser" file to store the objects.
@@ -3358,7 +3380,7 @@ StreamTokenizer in Java:
 
 --StreamTokenizer is a class present in the java.io package.
 
---It is used to reads the data from a stream and separates it into tokens automatically.
+--It is used to read data from a stream and automatically break it into smaller units called tokens.
 
 These tokens can be:
 
@@ -3368,6 +3390,17 @@ Symbols
 Special characters
 End of line
 End of file
+
+
+
+--It helps us identify whether the current data is a:
+
+word
+number
+symbol
+
+without manually splitting strings.
+
 
 
 
@@ -3397,7 +3430,9 @@ Q/- Why Do We Need StreamTokenizer?
 A/- Normally when reading data from a file:
 
 
-FileReader fr = new FileReader("abc.txt"); // reads character by character
+FileReader fr = new FileReader("data.txt"); // reads character by character
+
+//OR
 
 BufferedReader br = new BuffererdReader(new FileReader("data.text")); // reads line by line
 
@@ -3435,11 +3470,11 @@ StreamTokenizer st = new StreamTokenizer(br);
 Important Fields of StreamTokenizer class:
 -------------------------------------------
 
-int ttype; // Type f current token
+int ttype; // Stores the type of the current token.
 
-String sval; //Stores String token
+String sval; // Stores the string value if the token is a word.
 
-double nval; // Stores numeric tokens
+double nval; // Stores the numeric value if the token is a number.
 
 
 
@@ -3449,10 +3484,10 @@ double nval; // Stores numeric tokens
 Important Constants of StreamTokenizer class:
 ---------------------------------------------
 
-public static final int TT_EOF; // Current token is End of File
-public static final int TT_EOL; // Current token is End of line
-public static final int TT_NUMBER; //Current token is a number
-public static final int TT_WORD; //Current token is a word 
+StreamTokenizer.TT_EOF; // Represents End Of File.
+StreamTokenizer.TT_EOL; // Represents End Of Line.
+StreamTokenizer.TT_NUMBER; // Represents a numeric token.
+StreamTokenizer.TT_WORD; // Represents a word token.
 
 
 
@@ -3596,10 +3631,10 @@ Default Behavior of StreamTokenizer:
 
 
 
-Example: Reading Line by Line
+Example: Detecting End of Line
 
 
---By default newline is ignored.
+--By default, newline characters are ignored.
 
 --To detect line endings:
 
@@ -3666,6 +3701,241 @@ A
 B
 X
 Y
+
+
+
+
+Configuring the StreamTokenizer:
+---------------------------------
+
+--StreamTokenizer allows customization of token parsing behavior.
+
+
+1. eolIsSignificant(boolean flag): 
+
+--If true, newline characters are treated as tokens (TT_EOL).
+
+Useful when processing:
+
+CSV files
+line-based commands
+expressions line-by-line
+
+
+
+
+2. slashSlashComments(boolean flag): 
+
+--If true, recognizes // and ignores everything until the end of the line.
+
+Example:
+
+
+File Content (data.txt):
+------------------------
+
+Java 100 // This is Java marks
+Python 200
+
+
+
+Code:
+------
+
+
+
+st.slashSlashComments(true);
+
+while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+    if (st.ttype == StreamTokenizer.TT_WORD) {
+        System.out.println(st.sval);
+    }
+
+    else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+        System.out.println(st.nval);
+    }
+}
+
+
+
+Output:
+
+Java
+100.0
+Python
+200.0
+
+--The comment part is ignored.
+
+
+
+3. slashStarComments(boolean flag): 
+
+--If true, recognizes /* ... */ and ignores the content. (multiline comments)
+
+Example:
+
+File Content(data.txt):
+-----------------------
+
+Java 100 /* Core Java Marks */
+Python 200
+
+
+st.slashStarComments(true);
+
+
+Output:
+
+Java
+100.0
+Python
+200.0
+
+
+
+4. whitespaceChars(int low, int hi): 
+
+
+--Treats characters in the specified range as whitespace.
+
+--These characters become separators and are ignored.
+
+Example: Treating Comma as Whitespace (separator)
+
+
+File Content(data.txt):
+-----------------------
+
+Java,100,Python,200
+
+
+st.whitespaceChars(',', ',');
+
+
+Output:
+
+Java
+100.0
+Python
+200.0
+
+--Here, The commas behave like spaces.
+
+
+Another Example: Ignore Colon
+
+
+File Content(data.txt):
+-----------------------
+
+Name:Raj,Age:20
+
+
+st.whitespaceChars(':', ':');
+st.whitespaceChars(',', ',');
+
+Output:
+
+Name
+Raj
+Age
+20
+
+
+
+
+
+5. wordChars(int low, int hi):
+
+--It forces a range of characters to be treated as part of words.
+
+Useful for:
+
+email parsing
+usernames
+special identifiers
+
+
+Example: Treating @ as Part of Word
+
+
+By default:
+
+abc@gmail.com
+
+gets split into multiple tokens.
+
+--To treat it as a single word:
+
+
+st.wordChars('@', '@');
+st.wordChars('.', '.');
+
+
+File Content(data.txt)
+----------------------
+
+Email abc@gmail.com
+
+Output:
+
+Email
+abc@gmail.com
+
+
+
+Another Example: Hyphenated Words
+
+File Content(data.txt)
+----------------------
+
+full-stack developer
+
+st.wordChars('-', '-');
+
+Output:
+
+full-stack
+developer
+
+
+Without this configuration:
+
+full
+-
+stack
+developer
+
+
+6. quoteChar(int ch)
+
+--Treats text inside quotes as a single token.
+
+
+Example:
+
+File Content(data.txt):
+
+"Java Programming" 100
+
+st.quoteChar('"');
+
+Output:
+
+Java Programming
+100.0
+
+Without quoteChar():
+
+Java
+Programming
+100
+
+
+
+
 
 
 
@@ -3982,10 +4252,73 @@ public class Demo {
 
 
 
+Task 4:
+-------
+
+
+File "data.txt" containing: (Name of the student and their marks)
+
+Rohit: 850, Aman: 900 ,Karan: 760, Dinesh: 100
+
+--Get the Highest marks of the student:
+
 
 
  
+Solution:
+---------
 
+package com.chitkara;
+
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+        try (FileReader fr = new FileReader("data.txt")) {
+
+            StreamTokenizer st = new StreamTokenizer(fr);
+
+            // Treat ':' and ',' as separators
+            st.whitespaceChars(':', ':');
+            st.whitespaceChars(',', ',');
+
+            String studentName = "";
+            double highestMarks = Double.MIN_VALUE;
+            String topper = "";
+
+            while (st.nextToken() != StreamTokenizer.TT_EOF) {
+
+                // Read Student Name
+                if (st.ttype == StreamTokenizer.TT_WORD) {
+
+                    studentName = st.sval;
+
+                    // Read Marks
+                    st.nextToken();
+
+                    if (st.ttype == StreamTokenizer.TT_NUMBER) {
+
+                        double marks = st.nval;
+
+                        if (marks > highestMarks) {
+                            highestMarks = marks;
+                            topper = studentName;
+                        }
+                    }
+                }
+            }
+
+            System.out.println("Topper Name  : " + topper);
+            System.out.println("Highest Marks: " + highestMarks);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
 
 
 
