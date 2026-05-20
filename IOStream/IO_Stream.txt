@@ -3293,89 +3293,6 @@ public class MainDemo {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-data.txt
-
-
-Raj: 750, Simran: 900, Priya: 700, Rahul: 650
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 StreamTokenizer in Java:
 ========================
 
@@ -3893,53 +3810,6 @@ abc@gmail.com
 
 
 
-Another Example: Hyphenated Words
-
-File Content(data.txt)
-----------------------
-
-full-stack developer
-
-st.wordChars('-', '-');
-
-Output:
-
-full-stack
-developer
-
-
-Without this configuration:
-
-full
--
-stack
-developer
-
-
-6. quoteChar(int ch)
-
---Treats text inside quotes as a single token.
-
-
-Example:
-
-File Content(data.txt):
-
-"Java Programming" 100
-
-st.quoteChar('"');
-
-Output:
-
-Java Programming
-100.0
-
-Without quoteChar():
-
-Java
-Programming
-100
-
 
 
 
@@ -4338,7 +4208,7 @@ File content (data.txt)
 <p>Hello Java</p>
 <h1>Welcome to Chitkara</h1>
 
-
+<small> This is the small test </small>
 
 
 Output:

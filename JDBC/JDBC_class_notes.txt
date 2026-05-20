@@ -1,0 +1,2676 @@
+
+
+
+JDBC: Java Database Connectivity:
+=================================
+
+
+
+Introduction to JDBC:
+---------------------
+
+--Java is widely used in the development of Business Applications and Enterprise Applications.
+
+
+--A business organization provides services to customers.
+
+--To computerize the services offered by a business organization, the software applications we develop are called Business Applications.
+
+Examples:
+
+Banking Application
+Hospital Management System
+Inventory Management System
+Online Shopping Application
+Insurance Management System
+
+
+
+
+Common Requirements to develop a Business Applications:
+--------------------------------------------------------
+
+--Almost every business application requires the following things:
+
+1. Maintaining the business data permanently in a secure and easily retrieval manner.
+
+Examples:
+
+Customer details
+Employee records
+Bank account details
+Product information
+
+
+2. Processing the data according to the business rules.
+
+
+Examples:
+
+Interest calculation in banking
+Salary calculation
+Bill generation
+Tax calculation
+
+
+
+3. Presenting the data to the user in user-understandable format.
+
+
+Examples:
+
+Reports
+Bills
+Account statements
+Dashboards
+
+
+
+
+--Among all the above requirements, persistent data storage is one of the most important requirements in a business application.
+
+Because:
+
+Business data is very valuable.
+Data should not be lost after application shutdown.
+Data should remain available for future use.
+
+
+
+--Business data is generally stored inside a Database.
+
+--Mostly, organizations use RDBMS (Relational Database Management System).
+
+Examples of RDBMS:
+-----------------
+
+Oracle
+MySQL
+PostgreSQL
+SQL Server
+SQLite
+DB2
+
+
+
+
+Why Java-Database Communication Required?
+------------------------------------------
+
+--RDBMS softwares are excellent in data storage in a secure and easily retrival manner, but it is very poor in processing and presenting the data in user-understandable format.
+
+--Similarly our Java application is excellent in processing the data and presenting the data, but Java is very poor in storing the data.
+(In Java we can store the business data inside files also using Serialization)
+
+
+--So inorder to develop a powerful business application we need to integrate the power of both heterogeneous technology (Java and Database softwares)
+
+
+
+Real-Life Analogy:
+-------------------
+
+--Suppose a Bank Locker Room stores valuable items safely.
+
+The locker room is excellent for storage.
+But it cannot process customer requests.
+
+Now consider the Bank Employee:
+
+Employee can interact with customers.
+Employee can process requests.
+But employee cannot permanently store all valuables personally.
+
+So both must work together.
+
+Similarly:
+
+Database = Safe Storage System
+Java Application = Intelligent Employee
+
+Both together build a complete business application.
+
+
+
+
+Q/ How Java DB communication is possible?
+
+A/- 
+
+
+
+--Java application can do any task through the method calls and objects. these method calls and objects are not understandable to the DB software.
+
+--Database softwares mainly interact using SQL statements, Java compiler does not accept the SQL syntax directly.
+
+
+--Inspite of heteregenious platform Java-DB communication is possible through the JDBC technology.
+
+Chinese    <----------translator------------> Russian
+
+Java Application<---------  Jdbc driver software  ------------------> DB software
+
+
+
+
+
+--Jdbc is a technology that enables any kind of Java application to communicate with any kind of DBMS software in a standard manner.
+
+--JDBC technology is given by the Sun-microsystem(Oracle corp).
+
+--JDBC technology comes in the form of a specification(It is a documentation which describes rules and guidelines to develop a particular software : Jdbc driver software)
+
+--"Jdbc driver software" is the implementation of this Jdbc Specification , which will act as a translator software to communicate our Java application with the DB software.
+
+--Each DB software has its own JDBC driver software, because every DB vendor will implement the JDBC specification and they develop the JDBC driver software.
+
+
+--these driver software comes in the form of a .jar file.
+
+MySQL : mysql-connector.jar
+
+Oracle DB : ojdbc6.jar
+
+postgress db : postgress.jar
+
+chitkaradb db: chitkaradriver.jar : we need to create this driver jar file according to the jdbc specification.
+
+
+--All the driver related jar files developed according to the same jdbc specification, so that any Java application can connect with any type of DB software in a standard manner.
+
+
+
+
+.jar files: (Java Archive)
+========
+
+Java Application{
+
+classes(1000)
+interfaces (methods)(100)
+
+}
+
+
+--compile all the .java files ------> .class files  ----> zip all the .class files inside a .jar file.
+
+
+----->
+
+
+ratanapp{
+
+A.java  , funA()
+B.java 
+Demo.java
+}
+
+--after compilation and creation of a1.jar file (a1.jar)
+
+--we have 2 types of jar files:
+
+1. executable jar file.
+2. normal jar files (utility jar file)  (these jar files we can utilize inside another java applcation by setting it inside the classpath of our application)
+
+
+
+class X{ // here we need to set a1.jar file in the classpath of our application
+	// then only the jar related classes will be available inside this class.
+
+main(){
+
+A a1 = new A();
+a1.funA();
+}
+
+}
+
+
+
+
+
+--In order to communicate our Java application with the DB s/w , Java developer need to get/download jdbc driver s/w related jar file for that specific Database softwre and add that jar file inside the classpath of their application.
+
+
+
+--To communicate our Java application with the DB server, Java developers needs 2 things:
+
+1. Jdbc driver s/w related jar file.
+2. JDBC API (this api comes in the form of following 2 packages):
+
+1. java.sql
+2. javax.sql
+
+--This JDBC API contains all the classes and interfaces using which we can communicate our java application with the DB software.
+
+
+To download the jdbc driver jar file for MySQL:
+-----------------------------------------------
+
+https://dev.mysql.com/downloads/connector/j/
+
+--Download the "Platform Independent" Jar file
+
+--Unzip this file (To get the mysql-connector.jar file)
+
+--Setting this jar file to the classpath of our application:
+
+1. Create a new Java Project inside the eclipse
+
+2. Right click on the project ----> Build Path-->Add External Archives--->Select the jar file--->finish.
+
+
+
+JDBC Architecture:
+------------------
+
+Java Application
+       |
+       v
+    JDBC API
+       |
+       v
+   JDBC Driver
+       |
+       v
+     Database
+
+
+
+
+
+
+JDBC client:
+===========
+
+Java app <-----------> DB software.
+
+--In Java-DB communication, our Java application will act as a client because Java application needs the services of the DB server. so our Java application will act as a JDBC client.
+
+
+Responsibilities of the JDBC client:
+====================================
+
+1. Requesting the DB connection.
+
+2. Submitting the appropriate SQL statement to the db server in the form of String object.
+
+3. Processing the result given by the DB server.
+
+4. Dealing with exceptions if any.
+
+5. Managing the transactions whenever it is required.
+
+6. Closing the connection once done with the DB operation.
+
+
+
+JDBC driver :
+===========
+
+--It is a translation software written in Java  according to the JDBC specification.(it comes in the form of a .jar file)
+
+
+Responsibility of Jdbc driver software:
+======================================
+
+1. Establishing the connection. (Connects Java application with the database)
+
+2. Receiving the Jdbc method calls (Java method calls) and translate them into the DB understandable format(sql) and forward them to the DB software.
+
+3. Translating the DB software given result in the Java format (Java objects) and returns that object to the JDBC client.
+
+
+
+Steps to connect our Java application with the DB sever (MySQL):
+================================================================
+
+
+1. Download/get the jdbc driver related jar file (mysql-connector.jar) from the internet and set that jar file inside the classpath of our Java application.
+
+2. Load the driver related main class into the memory. (com.mysql.cj.jdbc.Driver)
+
+3. Prepare the connection String(URL).
+
+4. Establish the connection
+
+5. After performing the CRUD(Create record, retrieve, update, delete ) operation close the connection.
+
+
+
+
+Example:
+--------
+
+--Create a Database inside the MySQL: chitkaradb
+
+
+Important details to connect with chitkaradb of MySQL:
+=====================================================
+
+
+1. String driverClass = "com.mysql.cj.jdbc.Driver"; 
+
+--This is the main Driver class belongs to the driver related jar file of MySQL (mysql-connector.jar).
+
+2. String url = "jdbc:mysql://localhost:3306/chitkaradb";
+
+
+Here,
+
+jdbc: main protocol
+mysql: sub-protocol
+localhost: Database server location
+3306: Port number of the database server
+chitkaradb: Database name inside the MySQL RDBMS.
+
+
+3. String username= "root" 
+
+--Default username of MySQL
+
+4. String password = "root" 
+
+--The password we have choosen while installing MySQL RDBMS.
+
+
+
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class Demo {
+
+	public static void main(String[] args) throws Exception {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkara";
+		String username = "root";
+		String password = "root";
+
+		Class.forName(driverName);
+
+		Connection conn = DriverManager.getConnection(url, username, password);
+
+		if (conn != null) {
+			System.out.println("Connected..");
+			System.out.println(conn);
+
+			// Once connection is established we can can perform the DB related operations.
+
+		} else {
+			System.out.println("Connection fails..");
+		}
+
+		// closing the connection.
+		conn.close();
+
+	}
+
+}
+
+
+
+Recommended way : try with resource:
+------------------------------------
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkara";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(url, username, password)) {
+
+			if (conn != null) {
+				System.out.println("Connected..");
+				System.out.println(conn);
+
+				// Once connection is established we can can perform the DB related operations.
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+--When Class.forName() method of our Jdbc application executes, 3 things happens in the background:
+
+1. Driver related main class will be loaded into the primary memory.
+
+2. Driver related main class object will be created.
+
+3. That driver object will be registered with the DriverManager class.
+
+
+ex:
+
+
+		try {
+			Driver d = new Driver();
+			
+			DriverManager.registerDriver(d);
+			
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+
+
+--The above line of code is written inside the static block of every Driver class.
+
+
+Note: From JDBC 4.0 onwards, explicit driver loading using Class.forName() is optional because drivers are automatically loaded through Service Provider Mechanism (SPI).
+(but recomended to have for the beginners).
+
+--Here at Runtime our JVM will load the appropriate Driver class into the memory by taking it from the classpath.
+
+
+Static and Non-static blocks in Java:
+=====================================
+
+--In Java, a class can contain:
+
+1. Static blocks (also called static initialization blocks)
+2. Non-static blocks (also called instance initialization blocks)
+3. Constructors
+4. Methods
+
+--These blocks are used to initialize objects and class-level data. and we can write the logics(Executable codes)
+
+
+
+
+1. Static Block
+----------------
+
+--A static block is a block of code written using the static keyword.
+
+syntax:
+
+static{
+    // code
+}
+
+
+
+Important Points:
+
+--Static blocks are executed only once.
+
+--They are executed when the class is loaded into memory.
+
+--Static blocks execute before the main() method.
+
+--Mainly used for initializing static data/resources.
+
+--A class can contain multiple static blocks.
+
+--Static blocks execute in the order they are written.
+
+
+
+
+2. Non-Static Block (Instance Initialization Block)
+---------------------------------------------------
+
+--A non-static block is a block without the static keyword.
+
+syntax:
+
+{
+	//code
+}
+
+
+
+Important Points:
+
+--Non-static blocks execute whenever an object is created.
+
+--They execute before the constructor.
+
+--They execute every time a new object is created.
+
+--Mainly used for common initialization code.
+
+
+
+
+Example:
+--------
+
+A.java:
+--------
+
+
+package com.masai;
+
+public class A {
+
+    // Non-static block
+    {
+        System.out.println("inside non-static block");
+    }
+
+    // Static block
+    static{
+        System.out.println("inside static block");
+    }
+
+    // Constructor
+    public A() {
+        System.out.println("inside constructor of A");
+    }
+
+    // Instance method
+    public void funA() {
+        System.out.println("inside funA of A");
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println("inside main method");
+
+        A a1 = new A();
+
+        a1.funA();
+    }
+}
+
+
+Output:
+-------
+
+inside static block
+inside main method
+inside non-static block
+inside constructor of A
+inside funA of A
+
+
+
+Why Use Non-static Blocks?
+
+A/- If multiple constructors contain common code, instead of repeating the same code in every constructor, we can place that common code inside a non-static block.
+
+
+
+
+Note: A static block can contain any valid Java code, including object creation and method calls.
+
+
+Example:
+
+A.java:
+--------
+
+package com.masai;
+
+public class A {
+
+    static {
+
+        System.out.println("inside static block of A");
+
+        // Creating object inside static block
+        A a1 = new A();
+
+        a1.funA();
+    }
+
+    public void funA() {
+        System.out.println("inside funA of A");
+    }
+}
+
+
+
+Demo.java:
+----------
+
+package com.masai;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+        try {
+
+            // Loading class A dynamically
+            Class.forName("com.masai.A");
+
+        } catch (ClassNotFoundException e) {
+
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Output:
+
+inside static block of A
+inside funA of A
+
+
+Here, Class.forName("com.masai.A"); 
+
+This statement loads class A into memory dynamically.
+
+--As soon as the class is loaded:
+
+--Static blocks execute automatically.
+
+
+
+Types of SQL Statements:
+-----------------------
+
+1. DDL (Data Definition Language)
+---------------------------------
+CREATE
+ALTER
+DROP
+TRUNCATE
+
+2. DML (Data Manipulation Language)
+-----------------------------------
+INSERT
+UPDATE
+DELETE
+
+3. DRL/DQL (Data Retrieval Language)
+------------------------------------
+SELECT
+
+4. TCL (Transaction Control Language)
+-------------------------------------
+COMMIT
+ROLLBACK
+SAVEPOINT
+
+5. DCL (Data Control Language)
+------------------------------
+GRANT
+REVOKE
+
+
+
+
+Inserting record into the table using Java Application:
+=======================================================
+
+
+--Create the following student table inside the MySQL: chitkaradb
+
+
+create table student
+(
+roll int primary key,
+name varchar(12),
+address varchar(12),
+marks int
+);
+
+
+
+--Once we get the Connection object, we can execute SQL statements from our Java application.
+
+--To execute SQL statements, we require an object of the java.sql.Statement interface.
+
+--We get the Statement object by using:
+
+Statement st =  conn.createStatement();
+
+--createStatement() method of Connection object creates and returns a Statement object.
+
+--To execute SQL statements from Java application, Statement interface provides the following methods:
+
+1. public int executeUpdate(String sql) throws SQLException;
+
+--This method is generally used for SQL statements that modify the database data or structure.
+
+DML Statements
+   - INSERT
+   - UPDATE
+   - DELETE
+
+DDL Statements
+   - CREATE
+   - ALTER
+   - DROP
+   - TRUNCATE
+
+--This method will return number of row affected due to the supplied SQL statement.
+
+--For DDL statements: generally it returns 0 because no rows are affected directly.
+
+
+2. public ResultSet executeQuery(String sql) throws SQLException;
+
+--This method is used for SELECT queries.
+
+--It returns a ResultSet object.
+
+
+3. public boolean execute(String sql) throws SQLException;
+
+--This method can execute any type of SQL statement.
+
+It returns:
+
+true  -> if ResultSet object is returned
+false -> otherwise
+
+
+
+
+Note: In realtime mostly we use the executeUpdate() for DML operations and executeQuery() for the DRL operations, because Database administrator will manage the Database table schema, normalizations, and access privileges on the tables.
+
+
+
+InsertDemo.java:
+----------------
+
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(url, username, password);
+
+				Statement st = conn.createStatement();
+
+		) {
+
+			String sql = "insert into student values(10, 'Ram', 'delhi', 580)";
+
+			int x = st.executeUpdate(sql);
+
+			System.out.println(x + " Row inserted successfully..");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+Note: If we run the above program once again, It will generate a SQLException, Primary key violation, due to the roll is primary key, duplicate value is not allowed.
+
+
+
+Using Statement obejct inserting dynamic details inside the student table:
+==========================================================================
+
+InsertDemo.java:
+----------------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter Roll: ");
+		int roll = sc.nextInt();
+
+		System.out.println("Enter Name: ");
+		String name = sc.next();
+
+		System.out.println("Enter Address: ");
+		String address = sc.next();
+
+		System.out.println("Enter Marks: ");
+		int marks = sc.nextInt();
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(url, username, password);
+
+				Statement st = conn.createStatement();
+
+		) {
+
+			String sql = "insert into student values(" + roll + ", '" + name + "', '" + address + "', " + marks + ")";
+
+			int x = st.executeUpdate(sql);
+
+			System.out.println(x + " Row inserted successfully..");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+Limitations of java.sql.Statement Interface:
+===========================================
+
+
+--If we use Statement object to perform database operations, then it has the following limitations:
+
+
+1. Complexity in Handling Dynamic Queries:
+
+--When we use Statement object, we generally create SQL queries by concatenating Java variables into SQL String.
+
+As the query becomes larger:
+
+--query creation becomes difficult,
+--readability decreases,
+--chances of mistakes increase.
+
+
+2. Performance Problem:
+
+
+--Whenever a query is executed using Statement object, the Database Engine generally performs the following tasks every time:
+
+--Database Internal Processing
+--Query Parsing
+--Query Compilation
+--Query Optimization
+--Execution Plan Generation
+
+
+
+Example Query:
+
+select * from student where roll = 10
+
+Again:
+
+select * from student where roll = 20
+
+Again:
+
+select * from student where roll = 30
+
+
+--Even though only the value changes, the database may repeat:
+
+parsing,
+compilation,
+optimization,
+execution plan generation.
+
+--This repeated processing can reduce performance.
+
+
+
+3. SQL Injection Problem:
+
+--Using Statement object with dynamic query concatenation can lead to SQL Injection attacks.
+
+
+What is SQL Injection?
+
+--SQL Injection is a security vulnerability in which malicious SQL code is inserted into user input.
+
+Because of this:
+
+--unauthorized data access may happen,
+--data may be modified,
+--data may be deleted.
+
+
+
+Example of SQL Injection
+------------------------
+
+Suppose we have login code like this:
+
+
+String sql = "select * from users where username='"+ username+ "' and password='" + password + "'";
+
+
+Suppose user enters:
+
+username: admin
+
+password: ' OR 1=1 #
+
+
+
+Generated SQL becomes:
+
+select * from users where username='admin' and password='' OR 1=1
+
+Condition:
+
+1=1
+
+is always true.
+
+As a result:
+
+authentication may bypass,
+unauthorized login may happen.
+
+This is called SQL Injection.
+
+
+
+Example: Using SQL injection deletion of all the records:
+---------------------------------------------------------
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter Address To Delete student record: ");
+		String address = sc.nextLine();
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(url, username, password);
+
+				Statement st = conn.createStatement();
+
+		) {
+
+			String sql = "delete from student where address = '" + address + "' ";
+
+			System.out.println(sql);
+
+			int x = st.executeUpdate(sql);
+
+			System.out.println(x + " Row Deleted sucessfully..");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+--The above program should delete only those records which belongs to user entered address: 
+
+--But if the user will pass the input:
+
+delhi' OR 1=1 #
+
+// OR
+
+' OR 1=1 #
+
+
+
+
+
+To Overcome These Problems:
+---------------------------
+
+
+Instead of using Statement, we use: java.sql.PreparedStatement interface.
+
+
+Statement
+    |
+PreparedStatement
+
+
+--PreparedStatement is a child interface of Statement.
+
+
+Advantages of PreparedStatement:
+--------------------------------
+
+
+--PreparedStatement is one of the most commonly used interfaces in JDBC for executing SQL queries.
+
+It provides several advantages over Statement object.
+
+1. Better Performance for Repeated Query Execution:
+
+
+--When we use Statement object, database engine may perform the following tasks every time a query is executed:
+
+-Query Parsing
+-Query Compilation
+-Query Optimization
+-Execution Plan Generation
+
+
+Example using Statement:
+
+select * from student where roll = 10
+
+--Even though only values are changing, database may repeatedly process the query.
+
+--This repeated processing can reduce performance.
+
+
+In PreparedStatement, query structure remains fixed and only values change.
+
+Example:
+
+select * from student where roll = ?
+
+Now:
+
+--query is prepared only once,
+--database may compile and optimize the query only at the first execution,
+--execution plan may be stored inside database cache,
+--next time database can reuse the cached query plan.
+
+--Only parameter values are changed.
+
+
+2. Helps Prevent SQL Injection Attacks:
+
+
+--PreparedStatement helps prevent SQL Injection attacks because:
+
+-SQL query structure is fixed,
+-user input is treated only as data,
+-user input cannot modify SQL query logic.
+
+Later, even if malicious input is provided:
+
+admin' OR 1=1 #
+
+--it is treated as normal String data,
+--not executable SQL code.
+
+Therefore:
+
+--unauthorized query manipulation is prevented,
+--application security improves.
+
+
+3. Easier Handling of Dynamic Queries:
+
+--Using Statement object, dynamic queries are created using String concatenation.
+
+--But using the PreparedStatement, placeholders (?) simplify query handling.
+
+
+
+4. Better Readability and Maintainability: 
+
+PreparedStatement makes JDBC code:
+
+cleaner,
+more organized,
+easier to understand,
+easier to maintain.
+
+Because:
+
+SQL query and data values are separated,
+query structure remains fixed,
+code becomes more professional and readable.
+
+
+
+
+
+
+
+Creating PreparedStatement Object:
+---------------------------------
+
+
+--To create a PreparedStatement object, we call:
+
+prepareStatement(String sql) method on the Connection object.
+
+
+
+Syntax:
+
+1. Query with Fixed Values:
+
+PreparedStatement ps = conn.prepareStatement("insert into student values(30,'arun','pune',600)");
+
+
+2. Query with Placeholders:
+
+PreparedStatement ps = conn.prepareStatement("insert into student values(?,?,?,?)");
+
+
+Here:
+
+? symbols are called placeholders (parameters).
+Actual values are supplied later.
+
+
+Binding Values to Placeholders:
+
+
+--Before executing the query, we must bind values to placeholders using setXXX() methods.
+
+Example:
+
+ps.setInt(1, 40);
+
+ps.setString(2, "Sunil");
+
+ps.setString(3, "Chennai");
+
+ps.setInt(4, 700);
+
+
+
+Note: Placeholder indexing starts from 1, not from 0.
+
+
+
+Executing PreparedStatement:
+----------------------------
+
+--After binding values, we can execute the query using the following methods:
+
+
+1. public int executeUpdate() throws SQLException;
+
+
+2. public ResultSet executeQuery() throws SQLException;
+
+
+3. public boolean execute() throws SQLException;
+
+
+
+
+Important point:
+----------------
+
+In PreparedStatement, SQL query is supplied only once during object creation.
+
+Therefore:
+executeUpdate(),
+executeQuery(),
+and execute() methods do not require SQL String again.
+
+
+
+
+
+
+
+
+
+
+
+Modified Example: 
+-----------------
+
+--Inserting the Student records inside the table by taking input from the user.
+
+
+
+InsertDemo.java:
+----------------
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter Roll: ");
+		int roll = sc.nextInt();
+
+		System.out.println("Enter Name: ");
+		String name = sc.next();
+
+		System.out.println("Enter Address: ");
+		String address = sc.next();
+
+		System.out.println("Enter Marks: ");
+		int marks = sc.nextInt();
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("insert into student values(?,?,?,?)");
+
+		) {
+
+			// Binding the values
+			ps.setInt(1, roll);
+			ps.setString(2, name);
+			ps.setString(3, address);
+			ps.setInt(4, marks);
+
+			// Executing the PS
+			int x = ps.executeUpdate();
+
+			if(x >0)
+				System.out.println("record inserted successfully..");
+			else
+				System.out.println("Not inserted...");
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Repeated Execution of Same Query using PreparedStatement:
+=========================================================
+
+
+InsertDemo.java:
+---------------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Scanner sc = new Scanner(System.in);
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("insert into student values(?,?,?,?)");
+
+		) {
+
+			int count = 1;
+
+			while (true) {
+
+				System.out.println("Enter Details of Student " + (count++));
+
+				System.out.println("Enter ROll:");
+				int roll = sc.nextInt();
+
+				System.out.println("Enter Name:");
+				String name = sc.next();
+
+				System.out.println("Enter Address:");
+				String address = sc.next();
+
+				System.out.println("Enter Marks:");
+				int marks = sc.nextInt();
+
+				ps.setInt(1, roll);
+				ps.setString(2, name);
+				ps.setString(3, address);
+				ps.setInt(4, marks);
+
+				int rowsAffected = ps.executeUpdate();
+
+				if (rowsAffected > 0) {
+					System.out.println("Record inserted successfully.");
+				} else {
+					System.out.println("Record not inserted.");
+				}
+
+				System.out.println("Want more (y/n) ?");
+
+				String choice = sc.next();
+				if (choice.equalsIgnoreCase("n")) {
+					break;
+				}
+
+			}
+
+			System.out.println("Thank You !");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+update a record:        
+===============
+
+--Giving the grace marks to all the students whose marks is less than 500.
+
+SQL: update student set marks= marks+ ? where marks < 600;
+
+
+UpdateDemo.java:
+----------------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class UpdateDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Scanner sc = new Scanner(System.in);
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("update student set marks = marks + ? where marks < 700");
+
+		) {
+			System.out.println("Enter the grace marks:");
+			int graceMarks = sc.nextInt();
+
+			ps.setInt(1, graceMarks);
+
+			int rowsAffected = ps.executeUpdate();
+
+			if (rowsAffected > 0) {
+				System.out.println(rowsAffected + " Record updated successfully.");
+			} else {
+				System.out.println("No records updated.");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+
+Deletion example:
+=================
+
+--Delete the student record by the roll number:
+
+
+SQL: delete from student where roll = ?
+
+
+
+DeleteDemo.java:
+----------------
+
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Scanner sc = new Scanner(System.in);
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("delete from student where roll = ?");
+
+		) {
+			System.out.println("Enter the roll number to delete the record:");
+			int roll = sc.nextInt();
+
+			ps.setInt(1, roll);
+
+			int rowsAffected = ps.executeUpdate();
+
+			if (rowsAffected > 0) {
+				System.out.println(rowsAffected + " Record deleted successfully.");
+			} else {
+				System.out.println("No records deleted.");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Performing DRL operation (Select operation):
+============================================
+
+
+
+
+PreparedStatement ps= conn.prepareStatement("select * from student");
+		
+ResultSet rs= ps.executeQuery();
+
+
+--When a SELECT query is executed, database records are returned in the form of a java.sql.ResultSet object.
+
+--ResultSet object stores the records returned by the database query.
+
+The structure of ResultSet object depends upon:
+
+
+--In order to get the details from the ResultSet object, we should know the structure of the ResultSet object.
+
+
+
+Note: ResultSet object structure will depends upon the query what we have executed, it does not depends upon the table structure.
+
+
+
+
+Example1: 
+
+select * from student
+
+ResultSet structure contains:
+
+roll name address marks
+
+--because all columns are selected.
+
+Example2:
+
+select roll,name from student
+
+Now ResultSet contains only:
+
+roll name
+
+--because query selected only these columns.
+
+
+Example3:
+
+select count(*) from student
+
+Now ResultSet contains only one column:
+
+count(*)
+
+Therefore:
+
+--ResultSet structure depends upon query result,
+--not necessarily on full table structure.
+
+
+
+--Inside the ResultSet object, records are maintained in a tabular form.
+
+--A special pointer called Cursor is used to point to records.
+
+Initially:
+
+--cursor points before the first record. 
+
+This position is called: BFR (Before First Record)
+
+BFR 
+Record1
+Record2
+Record3
+ALR
+
+Where:
+
+BFR:  Before First Record
+ALR:  After Last Record
+
+--Initially cursor is always at BFR.
+
+Accessing Data from ResultSet:
+-----------------------------
+
+--To access data from ResultSet, we need to perform two tasks:
+
+1. Move Cursor to Record Area
+
+We must move cursor from:
+
+--BFR to actual record area.
+
+For this purpose, ResultSet provides following method:
+
+public boolean next() throws SQLException;
+
+
+next() method:
+
+--moves cursor to next record,
+--returns true if record exists,
+--returns false if cursor reaches ALR.
+
+
+
+
+2. Fetching Column Values:
+
+--After moving cursor to a valid record,
+
+--we can fetch column values using following method:
+
+public XXX getXXX(String columnName) throws SQLException;
+
+or 
+
+public XXX getXXX(int columnIndex) throws SQLException;
+
+
+Here:
+
+--XXX represents appropriate data type method.
+
+Example:
+
+
+int getInt()
+
+String getString()
+
+double getDouble()
+
+float getFloat()
+
+boolean getBoolean()
+
+
+
+Strategy for Processing ResultSet:
+-----------------------------------
+
+--The way we process ResultSet
+--depends upon expected number of records.
+
+
+Case 1: At Most One Record Expected
+
+If we are sure that:
+
+query returns either: 0 record or 1 record
+
+then we should use: if-else
+
+Example:
+
+select * from student where roll = 10;
+
+Because: roll is primary key, at most one record can exist.
+
+
+Example:
+
+if (rs.next()) {
+
+	System.out.println(rs.getInt("roll"));
+
+	System.out.println(rs.getString("name"));
+
+} else {
+
+	System.out.println("Record not found.");
+}
+
+
+
+Case 2: Multiple Records Possible:
+
+--If query may return multiple records,
+
+--then we should use: while loop
+
+
+Example:
+
+select * from student where name='Ramesh';
+
+--Because: multiple students may have same name (Non- primary key).
+
+
+Example:
+
+while (rs.next()) {
+
+	int r = rs.getInt("roll");
+
+	String n = rs.getString("name");
+
+	String a = rs.getString("address");
+
+	int m = rs.getInt("marks");
+
+	System.out.println(r + " " + n + " " + a + " " + m);
+}
+
+
+
+
+
+
+Example:
+
+Getting All the records from the table:
+======================================
+
+GetAllRecordsDemo.java:
+-----------------------
+
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class GetAllRecordsDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("select * from student");
+
+		) {
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+//				int r= rs.getInt("roll");
+//				String n= rs.getString("name");
+//				String a= rs.getString("address");
+//				int m= rs.getInt("marks");
+//
+//				System.out.println("Roll is :"+r);
+//				System.out.println("Name is :"+n);
+//				System.out.println("Address is :"+a);
+//				System.out.println("Marks is :"+m);
+
+				System.out.println("Roll is :" + rs.getInt("roll"));
+				System.out.println("Name is :" + rs.getString("name"));
+				System.out.println("Address is :" + rs.getString("address"));
+				System.out.println("Marks is :" + rs.getInt("marks"));
+
+				System.out.println("============================");
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Developing a searching application using JDBC:
+==============================================
+
+
+SerachDemo.java:
+---------------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class SerachDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Scanner sc = new Scanner(System.in);
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("select * from student where roll = ?");
+
+		) {
+
+			System.out.println("Enter the roll number: ");
+			int roll = sc.nextInt();
+
+			ps.setInt(1, roll);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				System.out.println("Roll is :" + rs.getInt("roll"));
+				System.out.println("Name is :" + rs.getString("name"));
+				System.out.println("Address is :" + rs.getString("address"));
+				System.out.println("Marks is :" + rs.getInt("marks"));
+
+			} else {
+				System.out.println("Student does not exist with roll: " + roll);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
+Getting only marks of a student:
+===============================
+
+
+GetMarksDemo.java:
+------------------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class GetMarksDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Scanner sc = new Scanner(System.in);
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("select marks from student where roll = ?");
+
+		) {
+
+			System.out.println("Enter the roll number: ");
+			int roll = sc.nextInt();
+
+			ps.setInt(1, roll);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				System.out.println("Marks is :" + rs.getInt("marks"));
+
+			} else {
+				System.out.println("Student does not exist with roll: " + roll);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Note: Closing PreparedStatement usually closes associated ResultSet object automatically.
+
+
+
+Example of using execute(String sql) method:
+--------------------------------------------
+
+boolean execute(String sql) method of: Statement or PreparedStatement can execute any type of SQL statement.
+
+It can execute:
+
+DDL
+DML
+DRL/DQL queries.
+
+
+Syntax:
+
+public boolean execute(String sql) throws SQLException;
+
+execute() method returns:
+
+true: Query returned ResultSet object
+false: Query did not return ResultSet
+
+Important Point
+
+Generally:
+
+SELECT query: returns true
+
+INSERT/UPDATE/DELETE/DDL: returns false
+
+because:
+
+--SELECT returns ResultSet
+--others do not return ResultSet
+
+
+
+Example 1: Using execute() with INSERT Query: 
+---------------------------------------------
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("insert into student values(?,?,?,?)");
+
+		) {
+
+			ps.setInt(1, 5);
+			ps.setString(2, "Dinesh");
+			ps.setString(3, "Chandigarh");
+			ps.setInt(4, 650);
+
+			boolean flag = ps.execute();
+
+			if (!flag) {
+				System.out.println("Record inserted successfully..");
+			} else {
+				System.out.println("Record not inserted..");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+Example2: Using execute() with SELECT Query
+--------------------------------------------
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class InsertDemo {
+
+	public static void main(String[] args) {
+
+		String driverName = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/chitkaradb";
+		String username = "root";
+		String password = "root";
+
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try (
+
+				Connection conn = DriverManager.getConnection(url, username, password);
+
+				PreparedStatement ps = conn.prepareStatement("select * from student");
+
+		) {
+			boolean flag = ps.execute();
+
+			if (flag) {
+
+				ResultSet rs = ps.getResultSet();
+
+				while (rs.next()) {
+
+					System.out.println("Roll is :" + rs.getInt("roll"));
+					System.out.println("Name is :" + rs.getString("name"));
+					System.out.println("Address is :" + rs.getString("address"));
+					System.out.println("Marks is :" + rs.getInt("marks"));
+
+					System.out.println("============================");
+
+				}
+
+			} else {
+				System.out.println("No record exist..");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+Note: In real-world JDBC applications:
+
+INSERT/UPDATE/DELETE: executeUpdate()
+
+SELECT: executeQuery()
+
+Unknown/Mixed SQL: execute()
+
+
+--executeUpdate() and executeQuery() are more specific,
+--code becomes cleaner and easier to understand.
+
+
+
+
+
+
+
+ResultSetMetaData in JDBC:
+=========================
+
+--When we execute a SELECT query in JDBC, the database returns the result in the form of a ResultSet object.
+
+But sometimes, we may not know:
+
+--how many columns are present,
+--column names,
+--column data types,
+--table names,
+--column sizes,
+--whether column is nullable or not.
+
+To get this structural information about the ResultSet object, JDBC provides:
+
+
+java.sql.ResultSetMetaData interface.
+
+
+--ResultSetMetaData is an interface in JDBC that provides information about the structure of the ResultSet object.
+
+It is mainly used to get:
+
+--Number of columns
+--Column names
+--Column data types
+--Column sizes
+--Table names
+--Nullable information
+--Auto increment information
+
+
+Important Point:
+
+--ResultSetMetaData does NOT contain actual data records.
+
+--It contains only information about: Structure of ResultSet
+
+
+Suppose:
+
+ResultSet = Student Report Card Data
+ResultSetMetaData = Format/Structure of Report Card
+
+Example:
+
+Roll	Name	Marks
+101	Ram	500
+
+Here:
+
+Actual records: ResultSet
+
+Whereas ResultSetMetaData is: Column details like:
+
+Roll is INTEGER
+Name is VARCHAR
+Marks is INTEGER
+
+
+We can get the ResultSetMetaData object using: 
+
+ResultSetMetaData rsmd = rs.getMetaData();
+
+
+Here:
+
+rs = ResultSet object
+rsmd = ResultSetMetaData object
+
+
+Important Methods of ResultSetMetaData:
+---------------------------------------
+
+1. int getColumnCount(): Returns number of columns.
+
+2. String getColumnName(int index): Returns column name
+
+3. String getColumnTypeName(int index): Returns datatype name
+
+4. String getTableName(int index): Returns table name
+
+5. int getColumnDisplaySize(int index): Returns column display size
+
+6. int isNullable(int index): Checks nullable column// It returns an integer constant.ResultSetMetaData.columnNoNulls, ResultSetMetaData.columnNullable
+
+7. boolean isAutoIncrement(int index): Checks auto increment
+
+
+
+Note: Column index starts from 1 not from 0.
+
+
+
+
+Example 1: Getting Number of Columns
+----------
+
+Demo.java:
+----------
+
+
+package com.chitkara;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+	String driverName = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/chitkaradb";
+        String username = "root";
+        String password = "root";
+
+	
+		try {
+			Class.forName(driverName);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+
+
+        try(
+            Connection conn =
+                DriverManager.getConnection(url, username, password);
+
+            PreparedStatement ps =
+                conn.prepareStatement("select * from student");
+
+        ){
+
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            int totalColumns = rsmd.getColumnCount();
+
+            System.out.println("Total Columns: " + totalColumns);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+Example 2: Getting All Column Names and their datatype names 
+---------
+
+ 	    ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            int totalColumns = rsmd.getColumnCount();
+
+            for(int i=1; i<=totalColumns; i++){
+
+                System.out.println(rsmd.getColumnName(i) + " --> " + rsmd.getColumnTypeName(i));
+            }
+
+
+
+
+Displaying Records Dynamically:
+-------------------------------
+
+
+Normally we write:
+
+rs.getInt("roll");
+rs.getString("name");
+
+But suppose we do not know:
+
+number of columns,
+column names.
+
+Then ResultSetMetaData becomes very useful.
+
+
+
+Example:
+
+Demo.java:
+---------
+
+package com.chitkara;
+
+import java.sql.*;
+
+public class Demo {
+
+    public static void main(String[] args) {
+
+	String driverName = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/chitkaradb";
+        String username = "root";
+        String password = "root";
+
+	try {
+		Class.forName(driverName);
+	} catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	}
+
+	
+        try(
+            Connection conn =
+                DriverManager.getConnection(url, username, password);
+
+            PreparedStatement ps =
+                conn.prepareStatement("select * from student");
+
+        ){
+
+            ResultSet rs = ps.executeQuery();
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            int totalColumns = rsmd.getColumnCount();
+
+            while(rs.next()){
+
+                for(int i=1; i<=totalColumns; i++){
+
+                    System.out.print(rs.getObject(i) + "\t");
+                }
+
+                System.out.println();
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Note:  rs.getObject(i) returns data in generic Object form.
+
+So:
+
+int
+String
+double
+float
+
+--all can be handled dynamically.
+
+
+
+
+Avoiding Hardcode Database Details Inside JDBC Application
+===========================================================
+
+--In many beginner JDBC programs, we usually write database details directly inside the Java program.
+
+Example:
+
+String driverClass = "com.mysql.cj.jdbc.Driver";
+String url = "jdbc:mysql://localhost:3306/chitkaradb";
+String username = "root";
+String password = "root";
+
+This is called: Hardcoding
+
+--because values are fixed inside source code.
+
+--Hardcoding database details creates several problems in real-world applications.
+
+
+1. Security Problem:
+
+--Suppose source code is shared publicly on:
+
+GitHub
+Company repository
+Backup systems
+
+--Then database credentials become exposed.
+
+Example:
+
+String password = "root";
+
+--Anyone can see the password. This is a major security risk.
+
+
+2. Difficult Maintenance:
+
+--Suppose database password changes:
+
+From: "root" to "admin123"
+
+Then we must:
+
+--modify source code,
+--recompile application,
+--redeploy application.
+
+This is inefficient.
+
+
+
+3. Different Environments Problem:
+
+--Real-world applications usually have multiple environments:
+
+| Environment | Purpose           |
+| ----------- | ----------------- |
+| Development | Developer testing |
+| Testing     | QA testing        |
+| Production  | Live application  |
+
+
+
+--Each environment may have different:
+
+database URL,
+username,
+password,
+port number.
+
+--Hardcoding makes environment switching difficult.
+
+
+
+
+Better Approach:
+----------------
+
+--Instead of hardcoding values inside Java source code:
+
+--Store configuration outside the application
+
+Examples:
+
+-properties file
+-XML file
+-YAML file
+-environment variables
+
+Most commonly used: .properties file
+
+
+
+
+Using Properties File:
+-----------------------
+
+--A properties file stores key-value pairs.
+
+Example:
+
+db.properties:
+-------------
+
+driverClass=com.mysql.cj.jdbc.Driver
+url=jdbc:mysql://localhost:3306/chitkaradb
+username=root
+password=root
+
+
+Steps to Read Database Details from Properties File:
+----------------------------------------------------
+
+Step 1: Create db.properties
+
+Step 2: Load properties file
+
+Step 3: Read values dynamically
+
+Step 4: Use values for JDBC connection
+
+
+Project Structure:
+------------------
+
+ProjectFolder
+|
+|-- src
+|    |-- com.chitkara
+|          |-- Demo.java
+|
+|-- db.properties
+
+
+
+
+db.properties
+-------------
+
+driverClass=com.mysql.cj.jdbc.Driver
+url=jdbc:mysql://localhost:3306/chitkaradb
+username=root
+password=root
+
+
+
+Demo.java:
+----------
+
+package com.chitkara;
+
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+public class Demo {
+
+	public static void main(String[] args) {
+
+		try (FileInputStream fis = new FileInputStream("db.properties")) {
+
+			Properties p = new Properties();
+			p.load(fis);
+
+			String drivarClass = p.getProperty("driverClass");
+			String url = p.getProperty("url");
+			String username = p.getProperty("username");
+			String password = p.getProperty("password");
+
+			// load the driver
+			Class.forName(drivarClass);
+
+			try (Connection conn = DriverManager.getConnection(url, username, password)) {
+
+				if (conn != null) {
+					System.out.println("connected...");
+
+					// Now we can perform the DB operations
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+
+
+
+
