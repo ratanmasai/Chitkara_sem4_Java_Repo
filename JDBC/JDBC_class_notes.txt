@@ -261,6 +261,20 @@ https://dev.mysql.com/downloads/connector/j/
 
 
 
+
+Setting the driver related jar file to the class path of our application inside IntelliJ IDEA:
+-----------------------------------------------------------------------------------------------
+
+create a Java Project---> File-->Project Structure ---> click on + ---> Java--->Select the jar file from the computer ---> ok-->ok
+
+
+
+
+
+
+
+
+
 JDBC Architecture:
 ------------------
 
