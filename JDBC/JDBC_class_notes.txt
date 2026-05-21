@@ -2686,5 +2686,317 @@ public class Demo {
 
 
 
+Types of JDBC Drivers:
+======================
+
+--JDBC technology allows Java applications to communicate with database software.
+
+--But Java application and database software cannot communicate directly because:
+
+-Java understands Java language,
+-Database understands SQL and DB-specific protocols.
+
+So we need: JDBC Driver
+
+--which acts as a translator between:
+
+-Java Application
+-Database Software
+
+
+
+JDBC drivers are divided into:
+
+
+| Type   | Driver Name                    |
+| ------ | ------------------------------ |
+| Type 1 | JDBC-ODBC Bridge Driver        |
+| Type 2 | Native-API Driver              |
+| Type 3 | Network Protocol Driver        |
+| Type 4 | Thin Driver / Pure Java Driver |
+
+
+
+
+Evolution of JDBC Drivers:
+-------------------------
+
+Type 1  ->  Type 2  ->  Type 3  ->  Type 4
+
+As technology improved:
+
+performance improved,
+portability improved,
+dependency reduced.
+
+
+Type 1 Driver: JDBC-ODBC Bridge Driver
+--------------
+
+Architecture:
+
+Java Application
+       |
+    JDBC API
+       |
+JDBC-ODBC Bridge
+       |
+      ODBC
+       |
+   Database
+
+
+What is ODBC?
+
+
+A/- ODBC means: Open Database Connectivity
+
+--It is a Microsoft technology used to communicate with databases.
+
+Working of Type 1 Driver:
+-------------------------
+
+--Java application sends JDBC calls.
+--JDBC-ODBC bridge converts JDBC calls into ODBC calls.
+--ODBC driver communicates with database.
+
+
+
+Disadvantages of Type 1 Driver:
+-------------------------------
+
+1. Performance Problem
+
+--Multiple conversions happen:
+
+	JDBC -> ODBC -> DB Protocol
+
+--So performance becomes slow.
+
+2. Platform Dependency
+
+--ODBC is platform dependent.
+
+3. ODBC Installation Required
+
+--ODBC driver must be installed on every client machine.
+
+4. Security and Maintenance Problems
+
+--More layers increase complexity.
+
+
+Important Point: 
+----------------
+
+--Type 1 driver was included in old JDK versions.
+
+But:
+
+--Removed from Java 8 onwards
+
+because:
+
+outdated,
+slow,
+platform dependent.
+
+Example
+-------
+
+sun.jdbc.odbc.JdbcOdbcDriver
+
+
+
+Type 2 Driver: Native API Driver
+--------------
+
+Architecture
+
+
+Java Application
+       |
+    JDBC API
+       |
+ Native API Driver
+       |
+ Native DB Library
+       |
+    Database
+
+
+Working:
+--------
+
+--JDBC calls converted into native DB API calls.
+--Native database libraries communicate with DB.
+
+Example:
+
+--Oracle OCI library,
+--DB2 native library.
+
+
+
+Disadvantages:
+-------------
+
+1. Native Library Required
+
+--Database vendor native library must be installed.
+
+Example:
+
+--DLL files,
+--shared libraries.
+
+2. Platform Dependency
+
+--Native libraries are OS dependent.
+
+
+3. Difficult Deployment
+
+--Every machine needs DB-specific native setup.
+
+Example
+--------
+
+Oracle OCI Driver.
+
+
+Type 3 Driver: Network Protocol Driver
+-------------
+
+
+Architecture
+
+
+Java Application
+       |
+    JDBC API
+       |
+ Network Driver
+       |
+ Middleware Server
+       |
+   Database
+
+
+
+Working:
+--------
+
+--JDBC calls sent to middleware server.
+--Middleware converts request into DB-specific protocol.
+--Middleware communicates with DB.
+
+
+Important Point:
+----------------
+
+--Middleware server acts as an intermediary.
+
+Disadvantages:
+--------------
+
+1. Middleware Server Required
+
+--Extra server increases complexity.
+
+2. Network Dependency
+
+--More network communication.
+
+3. Performance Overhead
+
+--Extra middleware processing.
+
+
+Example
+--------
+
+DataDirect SequeLink Driver.
+
+
+
+Type 4 Driver: Thin Driver / Pure Java Driver
+--------------
+
+
+Architecture:
+
+
+Java Application
+       |
+    JDBC API
+       |
+  Type 4 Driver
+       |
+   Database
+
+
+Working:
+--------
+
+--JDBC calls directly converted into DB protocol.
+--Driver communicates directly with database.
+
+No:
+
+ODBC,
+native library,
+middleware.
+
+
+
+Important Point:
+
+--Type 4 driver is: Pure Java Driver
+
+
+Advantages:
+-----------
+
+1. Best Performance
+
+--Direct DB communication.
+
+2. Platform Independent
+
+--Written completely in Java.
+
+3. No Native Library Required
+
+--Only JAR file needed.
+
+4. Easy Deployment
+
+--Just add driver JAR file to classpath.
+
+5. Most Commonly Used
+
+--Modern JDBC applications mostly use Type 4 drivers.
+
+
+Disadvantages: 
+--------------
+
+Database Specific:
+
+--Separate driver needed for each DB.
+
+Examples:
+
+MySQL driver,
+Oracle driver,
+PostgreSQL driver.
+
+
+MySQL Type 4 Driver Class:
+--------------------------
+
+com.mysql.cj.jdbc.Driver
+
 
 
